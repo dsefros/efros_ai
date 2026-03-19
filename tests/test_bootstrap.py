@@ -32,7 +32,7 @@ def test_bootstrap_wires_kernel_dependencies(monkeypatch):
     sys.modules["api.server"] = types.SimpleNamespace(create_app=lambda kernel, model_manager, runtime=None: None)
     sys.modules["kernel.register_knowledge"] = types.SimpleNamespace(register_knowledge=lambda kernel: None)
     sys.modules["services.models.model_manager"] = types.SimpleNamespace(
-        create_default_manager=lambda: DummyModelManager()
+        create_default_manager=lambda settings=None: DummyModelManager()
     )
     sys.modules["yaml"] = types.SimpleNamespace(safe_load=lambda *args, **kwargs: {})
     sys.modules["dotenv"] = types.SimpleNamespace(load_dotenv=lambda *args, **kwargs: None)
@@ -66,7 +66,7 @@ def test_bootstrap_wires_kernel_dependencies(monkeypatch):
     monkeypatch.setattr(run, "EventBus", lambda: "events")
     monkeypatch.setattr(run, "JobQueue", lambda: "jobs")
     monkeypatch.setattr(run, "Worker", build_worker)
-    monkeypatch.setattr(run, "create_default_manager", lambda: DummyModelManager())
+    monkeypatch.setattr(run, "create_default_manager", lambda settings=None: DummyModelManager())
     monkeypatch.setattr(run, "register_knowledge", fake_register_knowledge)
     monkeypatch.setattr(run, "load_module", fake_load_module)
     monkeypatch.setattr(run, "create_app", fake_create_app)
@@ -95,7 +95,7 @@ def test_create_app_lifespan_shuts_down_runtime(monkeypatch):
     sys.modules["api.server"] = types.SimpleNamespace(create_app=lambda kernel, model_manager, runtime=None: None)
     sys.modules["kernel.register_knowledge"] = types.SimpleNamespace(register_knowledge=lambda kernel: None)
     sys.modules["services.models.model_manager"] = types.SimpleNamespace(
-        create_default_manager=lambda: DummyModelManager()
+        create_default_manager=lambda settings=None: DummyModelManager()
     )
     sys.modules["yaml"] = types.SimpleNamespace(safe_load=lambda *args, **kwargs: {})
     sys.modules["dotenv"] = types.SimpleNamespace(load_dotenv=lambda *args, **kwargs: None)
@@ -113,7 +113,7 @@ def test_create_app_lifespan_shuts_down_runtime(monkeypatch):
     monkeypatch.setattr(run, "EventBus", lambda: "events")
     monkeypatch.setattr(run, "JobQueue", lambda: "jobs")
     monkeypatch.setattr(run, "Worker", build_worker)
-    monkeypatch.setattr(run, "create_default_manager", lambda: DummyModelManager())
+    monkeypatch.setattr(run, "create_default_manager", lambda settings=None: DummyModelManager())
     monkeypatch.setattr(run, "register_knowledge", lambda kernel: setattr(kernel, "knowledge", object()))
     monkeypatch.setattr(run, "load_module", lambda kernel, path: None)
 
