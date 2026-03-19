@@ -1,4 +1,8 @@
+from __future__ import annotations
+
 import logging
+from dataclasses import dataclass
+
 import uvicorn
 
 from kernel.ai_kernel import AIKernel
@@ -13,6 +17,18 @@ from api.server import create_app
 from configs.settings import API_HOST, API_PORT, LOG_LEVEL
 
 
+@dataclass
+class AppRuntime:
+    kernel: AIKernel
+    model_manager: object
+    events: EventBus
+    jobs: JobQueue
+    worker: Worker
+
+    def shutdown(self) -> None:
+        self.worker.stop()
+
+
 def configure_logging():
     level = getattr(logging, str(LOG_LEVEL).upper(), logging.INFO)
     logging.basicConfig(
@@ -21,24 +37,43 @@ def configure_logging():
     )
 
 
-def bootstrap():
-    logger = logging.getLogger(__name__)
 
+def build_runtime() -> AppRuntime:
     kernel = AIKernel()
 
-    kernel.events = EventBus()
-    kernel.jobs = JobQueue()
+    events = EventBus()
+    jobs = JobQueue()
+    worker = Worker(kernel, jobs)
 
-    worker = Worker(kernel, kernel.jobs)
-    worker.start()
+    kernel.events = events
+    kernel.jobs = jobs
+    kernel.worker = worker
 
     model_manager = create_default_manager()
     kernel.model_manager = model_manager
 
     register_knowledge(kernel)
     load_module(kernel, "modules/support_module")
+    worker.start()
 
-    app = create_app(kernel, model_manager)
+    return AppRuntime(
+        kernel=kernel,
+        model_manager=model_manager,
+        events=events,
+        jobs=jobs,
+        worker=worker,
+    )
+
+
+
+def bootstrap():
+    logger = logging.getLogger(__name__)
+
+    runtime = build_runtime()
+    kernel = runtime.kernel
+    model_manager = runtime.model_manager
+
+    app = create_app(kernel, model_manager, runtime=runtime)
 
     logger.info(
         "bootstrap_completed",

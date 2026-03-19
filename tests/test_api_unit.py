@@ -132,3 +132,26 @@ def test_rag_answer():
     data = resp.json()
     assert "answer" in data
     assert "sources" in data
+
+
+def test_app_lifespan_retains_runtime_and_shuts_it_down():
+    class RuntimeStub:
+        def __init__(self):
+            self.shutdown_calls = 0
+
+        def shutdown(self):
+            self.shutdown_calls += 1
+
+    kernel = AIKernel()
+    load_module(kernel, "modules/support_module")
+    kernel.knowledge = FakeKnowledge()
+    model_manager = FakeModelManager()
+    runtime = RuntimeStub()
+    app = create_app(kernel, model_manager, runtime=runtime)
+
+    with TestClient(app) as client:
+        response = client.get("/health")
+        assert response.status_code == 200
+        assert client.app.state.runtime is runtime
+
+    assert runtime.shutdown_calls == 1

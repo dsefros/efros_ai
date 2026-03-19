@@ -1,4 +1,6 @@
-from services.jobs.job_queue import JobQueue, Job
+import time
+
+from services.jobs.job_queue import JobQueue, Job, Worker
 
 
 def test_queue_push_pop_round_trip_preserves_job_data():
@@ -43,3 +45,31 @@ def test_worker_start_is_idempotent():
     assert first is second
     assert worker.thread is first
     assert worker.thread.daemon is True
+
+
+class _RecordingKernelStub:
+    def __init__(self):
+        self.calls = []
+
+    def run_executor(self, name, payload):
+        self.calls.append((name, payload))
+        return {"name": name, "payload": payload}
+
+
+def test_worker_stop_exits_background_thread():
+    kernel = _RecordingKernelStub()
+    queue = JobQueue()
+    worker = Worker(kernel, queue)
+
+    worker.start()
+    queue.push(Job("demo", {"a": 1}))
+
+    deadline = time.time() + 1
+    while time.time() < deadline and not kernel.calls:
+        time.sleep(0.01)
+
+    worker.stop()
+
+    assert kernel.calls == [("demo", {"a": 1})]
+    assert worker.thread is not None
+    assert not worker.thread.is_alive()
