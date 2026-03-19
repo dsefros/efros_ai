@@ -1,35 +1,31 @@
+from __future__ import annotations
+
 from qdrant_client import QdrantClient
-from configs.settings import (
-    QDRANT_URL,
-    QDRANT_PRODUCT_COLLECTION,
-    QDRANT_REGULATORY_COLLECTION,
-    EMBEDDING_MODEL,
-    RERANKER_MODEL,
-    RAG_TOP_K_PER_COLLECTION,
-    RAG_FINAL_TOP_K,
-)
+
+from configs.settings import Settings, load_settings
 from kernel.exceptions import QdrantSearchError, RerankerError, ValidationError
 
 
 class KnowledgeEngine:
-    def __init__(self, model_manager, qdrant_url: str = QDRANT_URL):
+    def __init__(self, model_manager, qdrant_url: str | None = None, settings: Settings | None = None):
+        self.settings = settings or load_settings()
         self.model_manager = model_manager
-        self.qdrant = QdrantClient(url=qdrant_url)
-        self.product_collection = QDRANT_PRODUCT_COLLECTION
-        self.regulatory_collection = QDRANT_REGULATORY_COLLECTION
+        self.qdrant = QdrantClient(url=qdrant_url or self.settings.qdrant_url)
+        self.product_collection = self.settings.qdrant_product_collection
+        self.regulatory_collection = self.settings.qdrant_regulatory_collection
         self._embedder = None
         self._reranker = None
 
     def _get_embedder(self):
         if self._embedder is None:
             from sentence_transformers import SentenceTransformer
-            self._embedder = SentenceTransformer(EMBEDDING_MODEL)
+            self._embedder = SentenceTransformer(self.settings.embedding_model)
         return self._embedder
 
     def _get_reranker(self):
         if self._reranker is None:
             from sentence_transformers.cross_encoder import CrossEncoder
-            self._reranker = CrossEncoder(RERANKER_MODEL)
+            self._reranker = CrossEncoder(self.settings.reranker_model)
         return self._reranker
 
     def _embed(self, text: str):
@@ -132,18 +128,19 @@ class KnowledgeEngine:
             )
         return compact
 
-    def search(self, query: str, limit_per_collection: int = RAG_TOP_K_PER_COLLECTION):
+    def search(self, query: str, limit_per_collection: int | None = None):
         if not query or not query.strip():
             raise ValidationError("Query must not be empty")
 
-        product = self._search_collection(self.product_collection, query, limit_per_collection)
-        regulatory = self._search_collection(self.regulatory_collection, query, limit_per_collection)
+        search_limit = limit_per_collection or self.settings.rag_top_k_per_collection
+        product = self._search_collection(self.product_collection, query, search_limit)
+        regulatory = self._search_collection(self.regulatory_collection, query, search_limit)
 
         combined = product + regulatory
         combined.sort(key=lambda x: x["score"], reverse=True)
 
         reranked = self._rerank(query, combined)
-        return reranked[:RAG_FINAL_TOP_K]
+        return reranked[: self.settings.rag_final_top_k]
 
     def answer(self, query: str, model_name: str | None = None):
         context = self.search(query)

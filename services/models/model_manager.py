@@ -1,15 +1,14 @@
-from configs.settings import (
-    DEFAULT_MODEL,
-    MINISTRAL_MODEL_PATH,
-    QWEN2_MODEL_PATH,
-    MISTRAL7B_MODEL_PATH,
-    LLM_N_CTX,
-    LLM_N_THREADS,
-    LLM_N_GPU_LAYERS,
-    LLM_TEMPERATURE,
-    LLM_MAX_TOKENS,
-)
+from __future__ import annotations
+
+from configs.settings import Settings, load_settings
 from kernel.exceptions import ModelNotFoundError
+
+
+DEFAULT_MODEL_SPECS = {
+    "ministral": "ministral_model_path",
+    "qwen2": "qwen2_model_path",
+    "mistral7b": "mistral7b_model_path",
+}
 
 
 def _build_llama_cpp_model(**kwargs):
@@ -51,44 +50,22 @@ class ModelManager:
         return model.generate(prompt)
 
 
-def create_default_manager():
+def create_default_manager(settings: Settings | None = None):
+    settings = settings or load_settings()
     manager = ModelManager()
 
-    manager.register(
-        "ministral",
-        _build_llama_cpp_model(
-            model_path=MINISTRAL_MODEL_PATH,
-            n_ctx=LLM_N_CTX,
-            n_threads=LLM_N_THREADS,
-            n_gpu_layers=LLM_N_GPU_LAYERS,
-            temperature=LLM_TEMPERATURE,
-            max_tokens=LLM_MAX_TOKENS,
-        ),
-    )
+    for model_name, model_path_attr in DEFAULT_MODEL_SPECS.items():
+        manager.register(
+            model_name,
+            _build_llama_cpp_model(
+                model_path=getattr(settings, model_path_attr),
+                n_ctx=settings.llm_n_ctx,
+                n_threads=settings.llm_n_threads,
+                n_gpu_layers=settings.llm_n_gpu_layers,
+                temperature=settings.llm_temperature,
+                max_tokens=settings.llm_max_tokens,
+            ),
+        )
 
-    manager.register(
-        "qwen2",
-        _build_llama_cpp_model(
-            model_path=QWEN2_MODEL_PATH,
-            n_ctx=LLM_N_CTX,
-            n_threads=LLM_N_THREADS,
-            n_gpu_layers=LLM_N_GPU_LAYERS,
-            temperature=LLM_TEMPERATURE,
-            max_tokens=LLM_MAX_TOKENS,
-        ),
-    )
-
-    manager.register(
-        "mistral7b",
-        _build_llama_cpp_model(
-            model_path=MISTRAL7B_MODEL_PATH,
-            n_ctx=LLM_N_CTX,
-            n_threads=LLM_N_THREADS,
-            n_gpu_layers=LLM_N_GPU_LAYERS,
-            temperature=LLM_TEMPERATURE,
-            max_tokens=LLM_MAX_TOKENS,
-        ),
-    )
-
-    manager.set_default(DEFAULT_MODEL)
+    manager.set_default(settings.default_model)
     return manager

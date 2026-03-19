@@ -5,6 +5,7 @@ import pytest
 
 sys.modules.setdefault("dotenv", types.SimpleNamespace(load_dotenv=lambda *args, **kwargs: False))
 
+from configs.settings import Settings
 from kernel.exceptions import ModelNotFoundError
 from services.models.model_manager import ModelManager, create_default_manager
 
@@ -60,17 +61,19 @@ def test_create_default_manager_registers_expected_models(monkeypatch):
         return FakeModel(kwargs["model_path"])
 
     monkeypatch.setattr("services.models.model_manager._build_llama_cpp_model", stub_build_llama_cpp_model)
-    monkeypatch.setattr("services.models.model_manager.DEFAULT_MODEL", "qwen2")
-    monkeypatch.setattr("services.models.model_manager.MINISTRAL_MODEL_PATH", "/tmp/ministral.gguf")
-    monkeypatch.setattr("services.models.model_manager.QWEN2_MODEL_PATH", "/tmp/qwen2.gguf")
-    monkeypatch.setattr("services.models.model_manager.MISTRAL7B_MODEL_PATH", "/tmp/mistral7b.gguf")
-    monkeypatch.setattr("services.models.model_manager.LLM_N_CTX", 1024)
-    monkeypatch.setattr("services.models.model_manager.LLM_N_THREADS", 2)
-    monkeypatch.setattr("services.models.model_manager.LLM_N_GPU_LAYERS", 0)
-    monkeypatch.setattr("services.models.model_manager.LLM_TEMPERATURE", 0.1)
-    monkeypatch.setattr("services.models.model_manager.LLM_MAX_TOKENS", 256)
+    settings = Settings(
+        default_model="qwen2",
+        ministral_model_path="/tmp/ministral.gguf",
+        qwen2_model_path="/tmp/qwen2.gguf",
+        mistral7b_model_path="/tmp/mistral7b.gguf",
+        llm_n_ctx=1024,
+        llm_n_threads=2,
+        llm_n_gpu_layers=0,
+        llm_temperature=0.1,
+        llm_max_tokens=256,
+    )
 
-    manager = create_default_manager()
+    manager = create_default_manager(settings=settings)
 
     assert manager.default_model == "qwen2"
     assert manager.list_models() == {
@@ -81,3 +84,4 @@ def test_create_default_manager_registers_expected_models(monkeypatch):
     assert created[0]["model_path"] == "/tmp/ministral.gguf"
     assert created[1]["model_path"] == "/tmp/qwen2.gguf"
     assert created[2]["model_path"] == "/tmp/mistral7b.gguf"
+

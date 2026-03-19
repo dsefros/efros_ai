@@ -5,16 +5,14 @@ from dataclasses import dataclass
 
 import uvicorn
 
+from api.server import create_app
+from configs.settings import Settings, SettingsError, load_settings
 from kernel.ai_kernel import AIKernel
 from kernel.module_loader import load_module
 from kernel.register_knowledge import register_knowledge
-
 from services.events.event_bus import EventBus
 from services.jobs.job_queue import JobQueue, Worker
 from services.models.model_manager import create_default_manager
-
-from api.server import create_app
-from configs.settings import API_HOST, API_PORT, LOG_LEVEL
 
 
 @dataclass
@@ -24,13 +22,15 @@ class AppRuntime:
     events: EventBus
     jobs: JobQueue
     worker: Worker
+    settings: Settings
 
     def shutdown(self) -> None:
         self.worker.stop()
 
 
-def configure_logging():
-    level = getattr(logging, str(LOG_LEVEL).upper(), logging.INFO)
+def configure_logging(settings: Settings | None = None):
+    settings = settings or load_settings()
+    level = getattr(logging, settings.log_level.upper(), logging.INFO)
     logging.basicConfig(
         level=level,
         format="%(asctime)s %(levelname)s %(name)s %(message)s",
@@ -38,7 +38,8 @@ def configure_logging():
 
 
 
-def build_runtime() -> AppRuntime:
+def build_runtime(settings: Settings | None = None) -> AppRuntime:
+    settings = settings or load_settings()
     kernel = AIKernel()
 
     events = EventBus()
@@ -49,7 +50,7 @@ def build_runtime() -> AppRuntime:
     kernel.jobs = jobs
     kernel.worker = worker
 
-    model_manager = create_default_manager()
+    model_manager = create_default_manager(settings=settings)
     kernel.model_manager = model_manager
 
     register_knowledge(kernel)
@@ -62,14 +63,15 @@ def build_runtime() -> AppRuntime:
         events=events,
         jobs=jobs,
         worker=worker,
+        settings=settings,
     )
 
 
 
-def bootstrap():
+def bootstrap(settings: Settings | None = None):
     logger = logging.getLogger(__name__)
 
-    runtime = build_runtime()
+    runtime = build_runtime(settings=settings)
     kernel = runtime.kernel
     model_manager = runtime.model_manager
 
@@ -88,12 +90,20 @@ def bootstrap():
     return app
 
 
-if __name__ == "__main__":
-    configure_logging()
-    app = bootstrap()
+def main() -> None:
+    try:
+        settings = load_settings()
+        configure_logging(settings)
+        app = bootstrap(settings=settings)
+    except SettingsError as exc:
+        raise SystemExit(f"Configuration error: {exc}") from exc
 
     uvicorn.run(
         app,
-        host=API_HOST,
-        port=API_PORT
+        host=settings.api_host,
+        port=settings.api_port,
     )
+
+
+if __name__ == "__main__":
+    main()
