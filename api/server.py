@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
@@ -53,8 +55,19 @@ def _raise_http(e: Exception):
     raise HTTPException(status_code=500, detail=f"Unhandled error: {e}")
 
 
-def create_app(kernel, model_manager):
-    app = FastAPI(title="AI Platform API")
+
+def create_app(kernel, model_manager, runtime=None):
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        if runtime is not None:
+            app.state.runtime = runtime
+        try:
+            yield
+        finally:
+            if runtime is not None:
+                runtime.shutdown()
+
+    app = FastAPI(title="AI Platform API", lifespan=lifespan)
 
     @app.get("/")
     def root():
