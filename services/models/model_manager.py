@@ -1,4 +1,3 @@
-from services.models.llama_cpp_model import LlamaCppModel
 from configs.settings import (
     DEFAULT_MODEL,
     MINISTRAL_MODEL_PATH,
@@ -11,6 +10,12 @@ from configs.settings import (
     LLM_MAX_TOKENS,
 )
 from kernel.exceptions import ModelNotFoundError
+
+
+def _build_llama_cpp_model(**kwargs):
+    from services.models.llama_cpp_model import LlamaCppModel
+
+    return LlamaCppModel(**kwargs)
 
 
 class ModelManager:
@@ -51,7 +56,7 @@ def create_default_manager():
 
     manager.register(
         "ministral",
-        LlamaCppModel(
+        _build_llama_cpp_model(
             model_path=MINISTRAL_MODEL_PATH,
             n_ctx=LLM_N_CTX,
             n_threads=LLM_N_THREADS,
@@ -63,7 +68,7 @@ def create_default_manager():
 
     manager.register(
         "qwen2",
-        LlamaCppModel(
+        _build_llama_cpp_model(
             model_path=QWEN2_MODEL_PATH,
             n_ctx=LLM_N_CTX,
             n_threads=LLM_N_THREADS,
@@ -75,7 +80,7 @@ def create_default_manager():
 
     manager.register(
         "mistral7b",
-        LlamaCppModel(
+        _build_llama_cpp_model(
             model_path=MISTRAL7B_MODEL_PATH,
             n_ctx=LLM_N_CTX,
             n_threads=LLM_N_THREADS,
