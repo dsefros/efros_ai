@@ -1,0 +1,11 @@
+# Core boot dependencies: enough to import run.py, initialize the kernel,
+# load modules, construct the FastAPI app, and start the development server.
+fastapi
+uvicorn
+python-dotenv
+PyYAML
+qdrant-client
+
+# Optional dependencies: only needed when exercising full RAG search/answer
+# functionality, because the embedder and reranker are loaded lazily.
+sentence-transformers
