@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from configs.settings import Settings, load_settings
-from kernel.exceptions import ModelNotFoundError
+from kernel.exceptions import ModelDependencyError, ModelNotFoundError
 
 
 DEFAULT_MODEL_SPECS = {
@@ -9,6 +11,29 @@ DEFAULT_MODEL_SPECS = {
     "qwen2": "qwen2_model_path",
     "mistral7b": "mistral7b_model_path",
 }
+
+
+@dataclass(frozen=True)
+class ModelRegistrationSpec:
+    name: str
+    model_path_attr: str
+
+    def build_kwargs(self, settings: Settings) -> dict:
+        return {
+            "model_path": getattr(settings, self.model_path_attr),
+            "n_ctx": settings.llm_n_ctx,
+            "n_threads": settings.llm_n_threads,
+            "n_gpu_layers": settings.llm_n_gpu_layers,
+            "temperature": settings.llm_temperature,
+            "max_tokens": settings.llm_max_tokens,
+        }
+
+
+def _iter_default_model_specs() -> tuple[ModelRegistrationSpec, ...]:
+    return tuple(
+        ModelRegistrationSpec(name=model_name, model_path_attr=model_path_attr)
+        for model_name, model_path_attr in DEFAULT_MODEL_SPECS.items()
+    )
 
 
 def _build_llama_cpp_model(**kwargs):
@@ -54,18 +79,13 @@ def create_default_manager(settings: Settings | None = None):
     settings = settings or load_settings()
     manager = ModelManager()
 
-    for model_name, model_path_attr in DEFAULT_MODEL_SPECS.items():
-        manager.register(
-            model_name,
-            _build_llama_cpp_model(
-                model_path=getattr(settings, model_path_attr),
-                n_ctx=settings.llm_n_ctx,
-                n_threads=settings.llm_n_threads,
-                n_gpu_layers=settings.llm_n_gpu_layers,
-                temperature=settings.llm_temperature,
-                max_tokens=settings.llm_max_tokens,
-            ),
-        )
+    for spec in _iter_default_model_specs():
+        try:
+            manager.register(spec.name, _build_llama_cpp_model(**spec.build_kwargs(settings)))
+        except Exception as exc:
+            raise ModelDependencyError(
+                f"Failed to initialize model '{spec.name}' using backend '{settings.llm_backend}': {exc}"
+            ) from exc
 
     manager.set_default(settings.default_model)
     return manager

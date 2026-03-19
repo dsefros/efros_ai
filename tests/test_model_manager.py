@@ -1,3 +1,4 @@
+import importlib
 import sys
 import types
 
@@ -6,7 +7,8 @@ import pytest
 sys.modules.setdefault("dotenv", types.SimpleNamespace(load_dotenv=lambda *args, **kwargs: False))
 
 from configs.settings import Settings
-from kernel.exceptions import ModelNotFoundError
+from kernel.exceptions import ModelDependencyError, ModelNotFoundError
+from services.models.llama_cpp_model import LlamaCppModel
 from services.models.model_manager import ModelManager, create_default_manager
 
 
@@ -85,3 +87,53 @@ def test_create_default_manager_registers_expected_models(monkeypatch):
     assert created[1]["model_path"] == "/tmp/qwen2.gguf"
     assert created[2]["model_path"] == "/tmp/mistral7b.gguf"
 
+
+def test_create_default_manager_wraps_backend_initialization_failures(monkeypatch):
+    def fail_build_llama_cpp_model(**kwargs):
+        raise RuntimeError(f"missing dependency for {kwargs['model_path']}")
+
+    monkeypatch.setattr("services.models.model_manager._build_llama_cpp_model", fail_build_llama_cpp_model)
+
+    settings = Settings(
+        default_model="ministral",
+        ministral_model_path="/tmp/ministral.gguf",
+        qwen2_model_path="/tmp/qwen2.gguf",
+        mistral7b_model_path="/tmp/mistral7b.gguf",
+    )
+
+    with pytest.raises(ModelDependencyError, match="Failed to initialize model 'ministral'"):
+        create_default_manager(settings=settings)
+
+
+def test_llama_cpp_model_reports_missing_dependency_without_import_time_failure(monkeypatch):
+    monkeypatch.setattr("services.models.llama_cpp_model.import_module", lambda name: (_ for _ in ()).throw(ImportError("no llama_cpp")))
+
+    model = LlamaCppModel(model_path="/tmp/demo.gguf")
+
+    with pytest.raises(ModelDependencyError, match="llama-cpp-python is required"):
+        model.generate("hello")
+
+
+def test_llama_cpp_model_reports_missing_llama_class(monkeypatch):
+    monkeypatch.setattr("services.models.llama_cpp_model.import_module", lambda name: types.SimpleNamespace())
+
+    model = LlamaCppModel(model_path="/tmp/demo.gguf")
+
+    with pytest.raises(ModelDependencyError, match="llama_cpp.Llama is unavailable"):
+        model.generate("hello")
+
+
+def test_run_module_exits_cleanly_for_model_startup_errors(monkeypatch):
+    sys.modules["uvicorn"] = types.SimpleNamespace(run=lambda *args, **kwargs: None)
+    sys.modules["api.server"] = types.SimpleNamespace(create_app=lambda kernel, model_manager, runtime=None: None)
+    sys.modules["kernel.register_knowledge"] = types.SimpleNamespace(register_knowledge=lambda kernel: None)
+    sys.modules["services.models.model_manager"] = types.SimpleNamespace(
+        create_default_manager=lambda settings=None: (_ for _ in ()).throw(ModelDependencyError("llama backend missing"))
+    )
+    sys.modules["yaml"] = types.SimpleNamespace(safe_load=lambda *args, **kwargs: {})
+
+    sys.modules.pop("run", None)
+    run = importlib.import_module("run")
+
+    with pytest.raises(SystemExit, match="Startup error: llama backend missing"):
+        run.main()

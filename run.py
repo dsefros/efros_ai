@@ -8,6 +8,7 @@ import uvicorn
 from api.server import create_app
 from configs.settings import Settings, SettingsError, load_settings
 from kernel.ai_kernel import AIKernel
+from kernel.exceptions import ModelError
 from kernel.module_loader import load_module
 from kernel.register_knowledge import register_knowledge
 from services.events.event_bus import EventBus
@@ -97,6 +98,8 @@ def main() -> None:
         app = bootstrap(settings=settings)
     except SettingsError as exc:
         raise SystemExit(f"Configuration error: {exc}") from exc
+    except ModelError as exc:
+        raise SystemExit(f"Startup error: {exc}") from exc
 
     uvicorn.run(
         app,

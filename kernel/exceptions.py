@@ -14,6 +14,10 @@ class ModelInferenceError(ModelError):
     """Model failed to generate output."""
 
 
+class ModelDependencyError(ModelError):
+    """Required model backend dependency is unavailable or misconfigured."""
+
+
 class ExecutorError(AIPlatformError):
     """Base executor exception."""
 
