@@ -1,0 +1,62 @@
+# =========================
+# ENV / secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Virtual environments
+# =========================
+venv/
+.venv/
+env/
+
+# =========================
+# Python cache / build
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+
+build/
+dist/
+*.egg-info/
+
+# =========================
+# Testing / coverage
+# =========================
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# =========================
+# Logs / runtime artifacts
+# =========================
+logs/
+*.log
+
+# =========================
+# Data / local artifacts
+# =========================
+data/
+*.sqlite
+*.db
+
+# =========================
+# IDE / OS
+# =========================
+.vscode/
+.idea/
+.DS_Store
+
+# =========================
+# Windows metadata
+# =========================
+*:Zone.Identifier
+
+models/
