@@ -24,12 +24,14 @@ class Worker:
     def __init__(self, kernel, queue):
         self.kernel = kernel
         self.queue = queue
+        self.thread = None
 
     def start(self):
+        if self.thread and self.thread.is_alive():
+            return self.thread
 
         def run():
             while True:
-
                 job = self.queue.pop()
 
                 try:
@@ -40,6 +42,6 @@ class Worker:
                     if job.retries < 3:
                         self.queue.push(job)
 
-        t = threading.Thread(target=run)
-        t.daemon = True
-        t.start()
+        self.thread = threading.Thread(target=run, daemon=True)
+        self.thread.start()
+        return self.thread
