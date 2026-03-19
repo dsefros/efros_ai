@@ -1,19 +1,14 @@
 import logging
-import uvicorn
 
 from kernel.ai_kernel import AIKernel
-from kernel.module_loader import load_module
-from kernel.register_knowledge import register_knowledge
 
 from services.events.event_bus import EventBus
 from services.jobs.job_queue import JobQueue, Worker
-from services.models.model_manager import create_default_manager
-
-from api.server import create_app
-from configs.settings import API_HOST, API_PORT, LOG_LEVEL
 
 
 def configure_logging():
+    from configs.settings import LOG_LEVEL
+
     level = getattr(logging, str(LOG_LEVEL).upper(), logging.INFO)
     logging.basicConfig(
         level=level,
@@ -22,6 +17,11 @@ def configure_logging():
 
 
 def bootstrap():
+    from api.server import create_app
+    from kernel.module_loader import load_module
+    from kernel.register_knowledge import register_knowledge
+    from services.models.model_manager import create_default_manager
+
     logger = logging.getLogger(__name__)
 
     kernel = AIKernel()
@@ -54,6 +54,9 @@ def bootstrap():
 
 
 if __name__ == "__main__":
+    import uvicorn
+    from configs.settings import API_HOST, API_PORT
+
     configure_logging()
     app = bootstrap()
 

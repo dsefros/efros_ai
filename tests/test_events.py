@@ -1,15 +1,16 @@
 from services.events.event_bus import EventBus, Event
 
-def test_event():
-
+def test_publish_delivers_event_to_subscriber():
     bus = EventBus()
+    received = []
 
     def handler(event):
-        print("EVENT RECEIVED:", event.payload)
+        received.append(event)
 
     bus.subscribe("test", handler)
 
-    bus.publish(Event("test", {"msg": "hello"}))
+    event = Event("test", {"msg": "hello"})
+    bus.publish(event)
 
-if __name__ == "__main__":
-    test_event()
+    assert received == [event]
+    assert received[0].payload == {"msg": "hello"}

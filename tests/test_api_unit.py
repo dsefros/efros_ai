@@ -2,6 +2,7 @@ from fastapi.testclient import TestClient
 
 from api.server import create_app
 from kernel.ai_kernel import AIKernel
+from kernel.exceptions import ModelNotFoundError
 from kernel.module_loader import load_module
 
 
@@ -18,6 +19,8 @@ class FakeModelManager:
 
     def generate(self, prompt: str, model_name: str | None = None):
         model_name = model_name or self.default_model
+        if model_name not in self.models:
+            raise ModelNotFoundError(f"Model {model_name} not registered")
         return f"[{model_name}] {prompt}"
 
 
@@ -97,6 +100,23 @@ def test_llm():
     resp = client.post("/llm", json={"prompt": "hello", "model": "qwen2"})
     assert resp.status_code == 200
     assert resp.json()["response"] == "[qwen2] hello"
+    assert resp.json()["model"] == "qwen2"
+
+
+def test_llm_uses_default_model_when_model_not_provided():
+    client = build_test_client()
+    resp = client.post("/llm", json={"prompt": "hello"})
+
+    assert resp.status_code == 200
+    assert resp.json() == {"response": "[mock] hello", "model": "mock"}
+
+
+def test_llm_unknown_model_maps_to_not_found():
+    client = build_test_client()
+    resp = client.post("/llm", json={"prompt": "hello", "model": "missing"})
+
+    assert resp.status_code == 404
+    assert resp.json()["detail"] == "Model missing not registered"
 
 
 def test_agent():
@@ -123,6 +143,14 @@ def test_rag_search():
     assert "sources" in data
     assert len(data["sources"]) == 1
     assert data["sources"][0]["source"] == "doc.pdf"
+
+
+def test_rag_search_respects_limit_argument():
+    client = build_test_client()
+    resp = client.post("/rag/search", json={"query": "virtual cash register", "limit_per_collection": 1})
+
+    assert resp.status_code == 200
+    assert len(resp.json()["sources"]) == 1
 
 
 def test_rag_answer():

@@ -1,15 +1,3 @@
-from services.models.llama_cpp_model import LlamaCppModel
-from configs.settings import (
-    DEFAULT_MODEL,
-    MINISTRAL_MODEL_PATH,
-    QWEN2_MODEL_PATH,
-    MISTRAL7B_MODEL_PATH,
-    LLM_N_CTX,
-    LLM_N_THREADS,
-    LLM_N_GPU_LAYERS,
-    LLM_TEMPERATURE,
-    LLM_MAX_TOKENS,
-)
 from kernel.exceptions import ModelNotFoundError
 
 
@@ -47,6 +35,19 @@ class ModelManager:
 
 
 def create_default_manager():
+    from configs.settings import (
+        DEFAULT_MODEL,
+        MINISTRAL_MODEL_PATH,
+        QWEN2_MODEL_PATH,
+        MISTRAL7B_MODEL_PATH,
+        LLM_N_CTX,
+        LLM_N_THREADS,
+        LLM_N_GPU_LAYERS,
+        LLM_TEMPERATURE,
+        LLM_MAX_TOKENS,
+    )
+    from services.models.llama_cpp_model import LlamaCppModel
+
     manager = ModelManager()
 
     manager.register(
