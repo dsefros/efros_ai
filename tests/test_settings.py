@@ -39,6 +39,98 @@ def test_settings_from_env_validates_log_level():
         Settings.from_env({"LOG_LEVEL": "verbose"})
 
 
+def test_settings_from_env_keeps_support_integrations_disabled_by_default():
+    settings = Settings.from_env({})
+
+    assert settings.support_integrations.redmine.enabled is False
+    assert settings.support_integrations.redmine.base_url is None
+    assert settings.support_integrations.redmine.status_list == ()
+    assert settings.support_integrations.telegram.enabled is False
+    assert settings.support_integrations.telegram.bot_token is None
+    assert settings.support_integrations.history_persistence.enabled is False
+    assert settings.support_integrations.history_persistence.port == 5432
+    assert settings.support_integrations.history_persistence.ssl_mode == "prefer"
+
+
+def test_settings_from_env_parses_support_integrations():
+    settings = Settings.from_env(
+        {
+            "REDMINE_ENABLED": "true",
+            "REDMINE_BASE_URL": "https://redmine.example.com",
+            "REDMINE_API_KEY": "redmine-token",
+            "REDMINE_TARGET_STATUS": "triaged",
+            "REDMINE_STATUS_LIST": "new, triaged, closed",
+            "REDMINE_PROJECT_FILTERS": "ops, support",
+            "TELEGRAM_ENABLED": "true",
+            "TELEGRAM_BOT_TOKEN": "12345:telegram-token",
+            "TELEGRAM_DEFAULT_CHAT_ID": "-1001234567890",
+            "HISTORY_PERSISTENCE_ENABLED": "true",
+            "HISTORY_PERSISTENCE_HOST": "postgres.example.com",
+            "HISTORY_PERSISTENCE_PORT": "5433",
+            "HISTORY_PERSISTENCE_DATABASE": "support_history",
+            "HISTORY_PERSISTENCE_USER": "efros",
+            "HISTORY_PERSISTENCE_PASSWORD": "secret",
+            "HISTORY_PERSISTENCE_SCHEMA": "support",
+            "HISTORY_PERSISTENCE_SSL_MODE": "require",
+        }
+    )
+
+    assert settings.support_integrations.redmine.enabled is True
+    assert settings.support_integrations.redmine.base_url == "https://redmine.example.com"
+    assert settings.support_integrations.redmine.api_key == "redmine-token"
+    assert settings.support_integrations.redmine.target_status == "triaged"
+    assert settings.support_integrations.redmine.status_list == ("new", "triaged", "closed")
+    assert settings.support_integrations.redmine.project_filters == ("ops", "support")
+    assert settings.support_integrations.telegram.enabled is True
+    assert settings.support_integrations.telegram.bot_token == "12345:telegram-token"
+    assert settings.support_integrations.telegram.default_chat_id == "-1001234567890"
+    assert settings.support_integrations.history_persistence.enabled is True
+    assert settings.support_integrations.history_persistence.host == "postgres.example.com"
+    assert settings.support_integrations.history_persistence.port == 5433
+    assert settings.support_integrations.history_persistence.database == "support_history"
+    assert settings.support_integrations.history_persistence.user == "efros"
+    assert settings.support_integrations.history_persistence.password == "secret"
+    assert settings.support_integrations.history_persistence.schema == "support"
+    assert settings.support_integrations.history_persistence.ssl_mode == "require"
+
+
+def test_settings_from_env_requires_integration_fields_only_when_enabled():
+    with pytest.raises(SettingsError, match="REDMINE_BASE_URL is required"):
+        Settings.from_env({"REDMINE_ENABLED": "true", "REDMINE_API_KEY": "token"})
+
+    with pytest.raises(SettingsError, match="TELEGRAM_DEFAULT_CHAT_ID is required"):
+        Settings.from_env({"TELEGRAM_ENABLED": "true", "TELEGRAM_BOT_TOKEN": "token"})
+
+    with pytest.raises(SettingsError, match="HISTORY_PERSISTENCE_DATABASE is required"):
+        Settings.from_env(
+            {
+                "HISTORY_PERSISTENCE_ENABLED": "true",
+                "HISTORY_PERSISTENCE_HOST": "postgres.example.com",
+                "HISTORY_PERSISTENCE_USER": "efros",
+                "HISTORY_PERSISTENCE_PASSWORD": "secret",
+            }
+        )
+
+
+def test_settings_from_env_validates_support_integration_values():
+    with pytest.raises(SettingsError, match=r"REDMINE_BASE_URL must be a valid http\(s\) URL"):
+        Settings.from_env({"REDMINE_BASE_URL": "ftp://redmine.example.com"})
+
+    with pytest.raises(SettingsError, match="REDMINE_TARGET_STATUS must be included"):
+        Settings.from_env(
+            {
+                "REDMINE_TARGET_STATUS": "triaged",
+                "REDMINE_STATUS_LIST": "new,closed",
+            }
+        )
+
+    with pytest.raises(SettingsError, match="TELEGRAM_ENABLED must be a boolean"):
+        Settings.from_env({"TELEGRAM_ENABLED": "maybe"})
+
+    with pytest.raises(SettingsError, match="HISTORY_PERSISTENCE_SSL_MODE must be one of"):
+        Settings.from_env({"HISTORY_PERSISTENCE_SSL_MODE": "sometimes"})
+
+
 def test_load_settings_uses_cache_until_reset(monkeypatch):
     monkeypatch.setenv("API_PORT", "9000")
     first = load_settings()

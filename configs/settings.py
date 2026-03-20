@@ -4,6 +4,7 @@ import os
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Mapping
+from urllib.parse import urlparse
 
 from configs.domain_profiles import (
     DomainConfiguration,
@@ -23,6 +24,42 @@ class SettingsError(ValueError):
 
 
 DEFAULT_DOMAIN_NAME = "default"
+
+
+@dataclass(frozen=True)
+class RedmineSettings:
+    enabled: bool = False
+    base_url: str | None = None
+    api_key: str | None = None
+    target_status: str | None = None
+    status_list: tuple[str, ...] = ()
+    project_filters: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class TelegramSettings:
+    enabled: bool = False
+    bot_token: str | None = None
+    default_chat_id: str | None = None
+
+
+@dataclass(frozen=True)
+class HistoryPersistenceSettings:
+    enabled: bool = False
+    host: str | None = None
+    port: int = 5432
+    database: str | None = None
+    user: str | None = None
+    password: str | None = None
+    schema: str = "public"
+    ssl_mode: str = "prefer"
+
+
+@dataclass(frozen=True)
+class SupportIntegrationSettings:
+    redmine: RedmineSettings = RedmineSettings()
+    telegram: TelegramSettings = TelegramSettings()
+    history_persistence: HistoryPersistenceSettings = HistoryPersistenceSettings()
 
 
 @dataclass(frozen=True)
@@ -48,6 +85,7 @@ class Settings:
     llm_max_tokens: int = 900
     rag_top_k_per_collection: int = 5
     rag_final_top_k: int = 8
+    support_integrations: SupportIntegrationSettings = SupportIntegrationSettings()
     domain_config: DomainConfiguration | None = None
     domain_registry: DomainRegistry | None = None
     default_domain_name: str = DEFAULT_DOMAIN_NAME
@@ -77,6 +115,7 @@ class Settings:
         rag_top_k_per_collection = _get_int(source, "RAG_TOP_K_PER_COLLECTION", cls.rag_top_k_per_collection, minimum=1)
         rag_final_top_k = _get_int(source, "RAG_FINAL_TOP_K", cls.rag_final_top_k, minimum=1)
         default_domain_name = _get_str(source, "DEFAULT_DOMAIN_NAME", DEFAULT_DOMAIN_NAME)
+        support_integrations = _load_support_integrations(source)
 
         try:
             domain_config = load_domain_configuration(
@@ -113,10 +152,79 @@ class Settings:
             llm_max_tokens=llm_max_tokens,
             rag_top_k_per_collection=rag_top_k_per_collection,
             rag_final_top_k=rag_final_top_k,
+            support_integrations=support_integrations,
             domain_config=domain_config,
             domain_registry=domain_registry,
             default_domain_name=domain_registry.default_domain_name,
         )
+
+
+def _load_support_integrations(env: Mapping[str, str]) -> SupportIntegrationSettings:
+    redmine_enabled = _get_bool(env, "REDMINE_ENABLED", RedmineSettings.enabled)
+    redmine_base_url = _get_optional_url(env, "REDMINE_BASE_URL")
+    redmine_api_key = _get_raw(env, "REDMINE_API_KEY")
+    redmine_target_status = _get_raw(env, "REDMINE_TARGET_STATUS")
+    redmine_status_list = _get_csv_list(env, "REDMINE_STATUS_LIST")
+    redmine_project_filters = _get_csv_list(env, "REDMINE_PROJECT_FILTERS")
+    if redmine_enabled:
+        _require_present("REDMINE_BASE_URL", redmine_base_url)
+        _require_present("REDMINE_API_KEY", redmine_api_key)
+    if redmine_target_status and redmine_status_list and redmine_target_status not in redmine_status_list:
+        raise SettingsError(
+            "REDMINE_TARGET_STATUS must be included in REDMINE_STATUS_LIST when both are set"
+        )
+
+    telegram_enabled = _get_bool(env, "TELEGRAM_ENABLED", TelegramSettings.enabled)
+    telegram_bot_token = _get_raw(env, "TELEGRAM_BOT_TOKEN")
+    telegram_default_chat_id = _get_raw(env, "TELEGRAM_DEFAULT_CHAT_ID")
+    if telegram_enabled:
+        _require_present("TELEGRAM_BOT_TOKEN", telegram_bot_token)
+        _require_present("TELEGRAM_DEFAULT_CHAT_ID", telegram_default_chat_id)
+
+    history_enabled = _get_bool(env, "HISTORY_PERSISTENCE_ENABLED", HistoryPersistenceSettings.enabled)
+    history_host = _get_raw(env, "HISTORY_PERSISTENCE_HOST")
+    history_port = _get_int(env, "HISTORY_PERSISTENCE_PORT", HistoryPersistenceSettings.port, minimum=1, maximum=65535)
+    history_database = _get_raw(env, "HISTORY_PERSISTENCE_DATABASE")
+    history_user = _get_raw(env, "HISTORY_PERSISTENCE_USER")
+    history_password = _get_raw(env, "HISTORY_PERSISTENCE_PASSWORD")
+    history_schema = _get_str(env, "HISTORY_PERSISTENCE_SCHEMA", HistoryPersistenceSettings.schema)
+    history_ssl_mode = _get_choice(
+        env,
+        "HISTORY_PERSISTENCE_SSL_MODE",
+        HistoryPersistenceSettings.ssl_mode,
+        {"disable", "allow", "prefer", "require", "verify-ca", "verify-full"},
+    )
+    if history_enabled:
+        _require_present("HISTORY_PERSISTENCE_HOST", history_host)
+        _require_present("HISTORY_PERSISTENCE_DATABASE", history_database)
+        _require_present("HISTORY_PERSISTENCE_USER", history_user)
+        _require_present("HISTORY_PERSISTENCE_PASSWORD", history_password)
+
+    return SupportIntegrationSettings(
+        redmine=RedmineSettings(
+            enabled=redmine_enabled,
+            base_url=redmine_base_url,
+            api_key=redmine_api_key,
+            target_status=redmine_target_status,
+            status_list=redmine_status_list,
+            project_filters=redmine_project_filters,
+        ),
+        telegram=TelegramSettings(
+            enabled=telegram_enabled,
+            bot_token=telegram_bot_token,
+            default_chat_id=telegram_default_chat_id,
+        ),
+        history_persistence=HistoryPersistenceSettings(
+            enabled=history_enabled,
+            host=history_host,
+            port=history_port,
+            database=history_database,
+            user=history_user,
+            password=history_password,
+            schema=history_schema,
+            ssl_mode=history_ssl_mode,
+        ),
+    )
 
 
 def _get_raw(env: Mapping[str, str], name: str):
@@ -130,6 +238,18 @@ def _get_raw(env: Mapping[str, str], name: str):
 def _get_str(env: Mapping[str, str], name: str, default: str) -> str:
     value = _get_raw(env, name)
     return value if value is not None else default
+
+
+def _get_bool(env: Mapping[str, str], name: str, default: bool) -> bool:
+    value = _get_raw(env, name)
+    if value is None:
+        return default
+    normalized = value.lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    raise SettingsError(f"{name} must be a boolean, got {value!r}")
 
 
 def _get_int(
@@ -177,6 +297,38 @@ def _get_log_level(env: Mapping[str, str], name: str, default: str) -> str:
     if value not in valid_levels:
         raise SettingsError(f"{name} must be one of {sorted(valid_levels)}, got {value!r}")
     return value
+
+
+def _get_csv_list(env: Mapping[str, str], name: str) -> tuple[str, ...]:
+    value = _get_raw(env, name)
+    if value is None:
+        return ()
+    items = tuple(item.strip() for item in value.split(",") if item.strip())
+    if not items:
+        raise SettingsError(f"{name} must contain at least one non-empty comma-separated value when set")
+    return items
+
+
+def _get_choice(env: Mapping[str, str], name: str, default: str, valid_values: set[str]) -> str:
+    value = _get_str(env, name, default)
+    if value not in valid_values:
+        raise SettingsError(f"{name} must be one of {sorted(valid_values)}, got {value!r}")
+    return value
+
+
+def _get_optional_url(env: Mapping[str, str], name: str) -> str | None:
+    value = _get_raw(env, name)
+    if value is None:
+        return None
+    parsed = urlparse(value)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise SettingsError(f"{name} must be a valid http(s) URL, got {value!r}")
+    return value
+
+
+def _require_present(name: str, value: str | None) -> None:
+    if value is None:
+        raise SettingsError(f"{name} is required when the related integration is enabled")
 
 
 @lru_cache(maxsize=1)
