@@ -12,6 +12,7 @@ from kernel.exceptions import ModelError
 from kernel.module_loader import load_module
 from kernel.register_knowledge import register_knowledge
 from services.events.event_bus import EventBus
+from services.history import HISTORY_SERVICE_NAME, HistoryPersistenceError, build_history_repository
 from services.jobs.job_queue import JobQueue, Worker
 from services.models.model_manager import create_default_manager
 
@@ -24,6 +25,7 @@ class AppRuntime:
     jobs: JobQueue
     worker: Worker
     settings: Settings
+    history_repository: object | None = None
 
     def shutdown(self) -> None:
         self.worker.stop()
@@ -55,6 +57,9 @@ def build_runtime(settings: Settings | None = None) -> AppRuntime:
     kernel.model_manager = model_manager
 
     register_knowledge(kernel)
+    history_repository = build_history_repository(settings)
+    if history_repository is not None:
+        kernel.register_service(HISTORY_SERVICE_NAME, history_repository)
     load_module(kernel, "modules/support_module")
     worker.start()
 
@@ -65,6 +70,7 @@ def build_runtime(settings: Settings | None = None) -> AppRuntime:
         jobs=jobs,
         worker=worker,
         settings=settings,
+        history_repository=history_repository,
     )
 
 
@@ -98,7 +104,7 @@ def main() -> None:
         app = bootstrap(settings=settings)
     except SettingsError as exc:
         raise SystemExit(f"Configuration error: {exc}") from exc
-    except ModelError as exc:
+    except (ModelError, HistoryPersistenceError) as exc:
         raise SystemExit(f"Startup error: {exc}") from exc
 
     uvicorn.run(

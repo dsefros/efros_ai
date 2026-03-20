@@ -68,6 +68,7 @@ def test_bootstrap_wires_kernel_dependencies(monkeypatch):
     monkeypatch.setattr(run, "Worker", build_worker)
     monkeypatch.setattr(run, "create_default_manager", lambda settings=None: DummyModelManager())
     monkeypatch.setattr(run, "register_knowledge", fake_register_knowledge)
+    monkeypatch.setattr(run, "build_history_repository", lambda settings: "history-repo")
     monkeypatch.setattr(run, "load_module", fake_load_module)
     monkeypatch.setattr(run, "create_app", fake_create_app)
 
@@ -79,6 +80,7 @@ def test_bootstrap_wires_kernel_dependencies(monkeypatch):
     assert kernel.jobs == "jobs"
     assert kernel.model_manager.default_model == "mock"
     assert calls["knowledge_kernel"] is kernel
+    assert kernel.get_service("history_repository") == "history-repo"
     assert calls["load_module"] == (kernel, "modules/support_module")
     assert calls["create_app"][0] is kernel
     assert calls["create_app"][1] is kernel.model_manager
@@ -115,6 +117,7 @@ def test_create_app_lifespan_shuts_down_runtime(monkeypatch):
     monkeypatch.setattr(run, "Worker", build_worker)
     monkeypatch.setattr(run, "create_default_manager", lambda settings=None: DummyModelManager())
     monkeypatch.setattr(run, "register_knowledge", lambda kernel: setattr(kernel, "knowledge", object()))
+    monkeypatch.setattr(run, "build_history_repository", lambda settings: None)
     monkeypatch.setattr(run, "load_module", lambda kernel, path: None)
 
     runtime = run.build_runtime()
