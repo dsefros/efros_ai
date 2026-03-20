@@ -167,11 +167,13 @@ def test_list_domains_reports_configured_domains(monkeypatch, settings_with_doma
             'is_default': True,
             'collections': ['finance_docs', 'finance_regs'],
             'description': None,
+            'ingestion': {'enabled': False, 'strategy': 'manual', 'target_collections': ['finance_docs', 'finance_regs']},
         },
         {
             'name': 'support',
             'is_default': False,
             'collections': ['support_docs'],
             'description': None,
+            'ingestion': {'enabled': False, 'strategy': 'manual', 'target_collections': ['support_docs']},
         },
     ]

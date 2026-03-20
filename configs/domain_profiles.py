@@ -7,6 +7,7 @@ from typing import Any, Mapping
 
 
 _DOMAIN_NAME_RE = re.compile(r"^[a-z0-9](?:[a-z0-9_-]{0,62}[a-z0-9])?$")
+_ALLOWED_DISTANCE_VALUES = {"Cosine", "Dot", "Euclid", "Manhattan"}
 
 
 class DomainProfileError(ValueError):
@@ -19,6 +20,10 @@ class CollectionProfile:
     role: str = "knowledge"
     vector_size: int | None = None
     distance: str | None = None
+    create_if_missing: bool = False
+    fail_if_missing: bool = True
+    description: str | None = None
+    metadata: Mapping[str, str] | None = None
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, Any], *, path: str) -> "CollectionProfile":
@@ -26,7 +31,26 @@ class CollectionProfile:
         role = _optional_str(data, "role", default="knowledge", path=path)
         vector_size = _optional_int(data, "vector_size", path=path, minimum=1)
         distance = _optional_str(data, "distance", default=None, path=path)
-        return cls(name=name, role=role, vector_size=vector_size, distance=distance)
+        if distance is not None and distance not in _ALLOWED_DISTANCE_VALUES:
+            raise DomainProfileError(
+                f"{path}.distance must be one of {sorted(_ALLOWED_DISTANCE_VALUES)}, got {distance!r}"
+            )
+        create_if_missing = _optional_bool(data, "create_if_missing", default=False, path=path)
+        fail_if_missing = _optional_bool(data, "fail_if_missing", default=True, path=path)
+        if create_if_missing and vector_size is None:
+            raise DomainProfileError(f"{path}.vector_size is required when create_if_missing=true")
+        description = _optional_str(data, "description", default=None, path=path)
+        metadata = _optional_str_mapping(data, "metadata", path=path)
+        return cls(
+            name=name,
+            role=role,
+            vector_size=vector_size,
+            distance=distance,
+            create_if_missing=create_if_missing,
+            fail_if_missing=fail_if_missing,
+            description=description,
+            metadata=metadata,
+        )
 
 
 @dataclass(frozen=True)
@@ -68,13 +92,45 @@ class IngestionProfile:
     enabled: bool = False
     strategy: str = "manual"
     source_type: str | None = None
+    target_collections: tuple[str, ...] = ()
+    default_chunk_size: int | None = None
+    default_chunk_overlap: int = 0
 
     @classmethod
-    def from_mapping(cls, data: Mapping[str, Any], *, path: str) -> "IngestionProfile":
+    def from_mapping(
+        cls,
+        data: Mapping[str, Any],
+        *,
+        path: str,
+        domain_collections: tuple[CollectionProfile, ...] = (),
+    ) -> "IngestionProfile":
         enabled = _optional_bool(data, "enabled", default=False, path=path)
         strategy = _optional_str(data, "strategy", default="manual", path=path)
         source_type = _optional_str(data, "source_type", default=None, path=path)
-        return cls(enabled=enabled, strategy=strategy, source_type=source_type)
+        target_collections = _optional_str_list(data, "target_collections", path=path)
+        default_chunk_size = _optional_int(data, "default_chunk_size", path=path, minimum=1)
+        default_chunk_overlap = _optional_int(data, "default_chunk_overlap", path=path, minimum=0) or 0
+        if default_chunk_size is not None and default_chunk_overlap >= default_chunk_size:
+            raise DomainProfileError(f"{path}.default_chunk_overlap must be lower than default_chunk_size")
+
+        available_collections = {collection.name for collection in domain_collections}
+        if target_collections:
+            unknown = sorted(set(target_collections) - available_collections)
+            if unknown:
+                raise DomainProfileError(
+                    f"{path}.target_collections must reference configured domain collections, unknown={unknown}"
+                )
+        else:
+            target_collections = tuple(collection.name for collection in domain_collections)
+
+        return cls(
+            enabled=enabled,
+            strategy=strategy,
+            source_type=source_type,
+            target_collections=target_collections,
+            default_chunk_size=default_chunk_size,
+            default_chunk_overlap=default_chunk_overlap,
+        )
 
 
 @dataclass(frozen=True)
@@ -125,7 +181,11 @@ class DomainProfile:
             collections=collections,
             retrieval=RetrievalProfile.from_mapping(retrieval_raw, path=f"{path}.retrieval"),
             answering=AnsweringProfile.from_mapping(_mapping_or_empty(data.get("answering"), path=f"{path}.answering"), path=f"{path}.answering"),
-            ingestion=IngestionProfile.from_mapping(_mapping_or_empty(data.get("ingestion"), path=f"{path}.ingestion"), path=f"{path}.ingestion"),
+            ingestion=IngestionProfile.from_mapping(
+                _mapping_or_empty(data.get("ingestion"), path=f"{path}.ingestion"),
+                path=f"{path}.ingestion",
+                domain_collections=collections,
+            ),
             access=AccessProfile.from_mapping(_mapping_or_empty(data.get("access"), path=f"{path}.access"), path=f"{path}.access"),
             is_default=_optional_bool(data, "is_default", default=False, path=path),
             description=_optional_str(data, "description", default=None, path=path),
@@ -134,6 +194,12 @@ class DomainProfile:
     @property
     def collection_names(self) -> tuple[str, ...]:
         return tuple(collection.name for collection in self.collections)
+
+    def get_collection(self, name: str) -> CollectionProfile:
+        for collection in self.collections:
+            if collection.name == name:
+                return collection
+        raise DomainProfileError(f"Domain {self.name!r} does not define collection {name!r}")
 
 
 @dataclass(frozen=True)
@@ -225,7 +291,7 @@ def default_domain_configuration(*, product_collection: str, regulatory_collecti
                     final_top_k=final_top_k,
                 ),
                 answering=AnsweringProfile(),
-                ingestion=IngestionProfile(),
+                ingestion=IngestionProfile(target_collections=(product_collection, regulatory_collection)),
                 access=AccessProfile(),
                 is_default=True,
                 description="Compatibility domain synthesized from legacy RAG settings.",
@@ -287,7 +353,7 @@ def _optional_str(data: Mapping[str, Any], key: str, *, default: str | None, pat
 
 def _required_int(data: Mapping[str, Any], key: str, *, path: str, minimum: int | None = None) -> int:
     value = data.get(key)
-    if not isinstance(value, int) or isinstance(value, bool):
+    if isinstance(value, bool) or not isinstance(value, int):
         raise DomainProfileError(f"{path}.{key} must be an integer")
     if minimum is not None and value < minimum:
         raise DomainProfileError(f"{path}.{key} must be >= {minimum}")
@@ -298,7 +364,7 @@ def _optional_int(data: Mapping[str, Any], key: str, *, path: str, minimum: int 
     value = data.get(key)
     if value is None:
         return None
-    if not isinstance(value, int) or isinstance(value, bool):
+    if isinstance(value, bool) or not isinstance(value, int):
         raise DomainProfileError(f"{path}.{key} must be an integer")
     if minimum is not None and value < minimum:
         raise DomainProfileError(f"{path}.{key} must be >= {minimum}")
@@ -309,7 +375,7 @@ def _optional_float(data: Mapping[str, Any], key: str, *, path: str, minimum: fl
     value = data.get(key)
     if value is None:
         return None
-    if not isinstance(value, (int, float)) or isinstance(value, bool):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise DomainProfileError(f"{path}.{key} must be a number")
     parsed = float(value)
     if minimum is not None and parsed < minimum:
@@ -332,9 +398,25 @@ def _optional_str_list(data: Mapping[str, Any], key: str, *, path: str) -> tuple
         return ()
     if not isinstance(value, list):
         raise DomainProfileError(f"{path}.{key} must be a list of strings")
-    items = []
+    values: list[str] = []
     for index, item in enumerate(value):
         if not isinstance(item, str) or not item.strip():
             raise DomainProfileError(f"{path}.{key}[{index}] must be a non-empty string")
-        items.append(item.strip())
-    return tuple(items)
+        values.append(item.strip())
+    return tuple(values)
+
+
+def _optional_str_mapping(data: Mapping[str, Any], key: str, *, path: str) -> Mapping[str, str] | None:
+    value = data.get(key)
+    if value is None:
+        return None
+    if not isinstance(value, Mapping):
+        raise DomainProfileError(f"{path}.{key} must be an object of string values")
+    normalized: dict[str, str] = {}
+    for item_key, item_value in value.items():
+        if not isinstance(item_key, str) or not item_key.strip():
+            raise DomainProfileError(f"{path}.{key} keys must be non-empty strings")
+        if not isinstance(item_value, str) or not item_value.strip():
+            raise DomainProfileError(f"{path}.{key}[{item_key!r}] must be a non-empty string")
+        normalized[item_key.strip()] = item_value.strip()
+    return normalized
