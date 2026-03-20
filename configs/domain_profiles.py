@@ -136,13 +136,40 @@ class IngestionProfile:
 @dataclass(frozen=True)
 class AccessProfile:
     visibility: str = "internal"
-    required_roles: tuple[str, ...] = ()
+    default_action: str = "deny"
+    allowed_roles: tuple[str, ...] = ()
+    allowed_callers: tuple[str, ...] = ()
+    allowed_groups: tuple[str, ...] = ()
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, Any], *, path: str) -> "AccessProfile":
         visibility = _optional_str(data, "visibility", default="internal", path=path)
+        if visibility not in {"public", "internal", "private"}:
+            raise DomainProfileError(f"{path}.visibility must be one of ['internal', 'private', 'public']")
+
+        explicit_default = _optional_str(data, "default_action", default=None, path=path)
+        if explicit_default is None:
+            default_action = "allow" if visibility == "public" else "deny"
+        else:
+            default_action = explicit_default
+        if default_action not in {"allow", "deny"}:
+            raise DomainProfileError(f"{path}.default_action must be one of ['allow', 'deny']")
+
         required_roles = _optional_str_list(data, "required_roles", path=path)
-        return cls(visibility=visibility, required_roles=required_roles)
+        allowed_roles = _merge_unique(required_roles, _optional_str_list(data, "allowed_roles", path=path))
+        allowed_callers = _optional_str_list(data, "allowed_callers", path=path)
+        allowed_groups = _optional_str_list(data, "allowed_groups", path=path)
+        return cls(
+            visibility=visibility,
+            default_action=default_action,
+            allowed_roles=allowed_roles,
+            allowed_callers=allowed_callers,
+            allowed_groups=allowed_groups,
+        )
+
+    @property
+    def required_roles(self) -> tuple[str, ...]:
+        return self.allowed_roles
 
 
 @dataclass(frozen=True)
@@ -404,6 +431,18 @@ def _optional_str_list(data: Mapping[str, Any], key: str, *, path: str) -> tuple
             raise DomainProfileError(f"{path}.{key}[{index}] must be a non-empty string")
         values.append(item.strip())
     return tuple(values)
+
+
+def _merge_unique(*groups: tuple[str, ...]) -> tuple[str, ...]:
+    merged: list[str] = []
+    seen: set[str] = set()
+    for group in groups:
+        for item in group:
+            if item in seen:
+                continue
+            seen.add(item)
+            merged.append(item)
+    return tuple(merged)
 
 
 def _optional_str_mapping(data: Mapping[str, Any], key: str, *, path: str) -> Mapping[str, str] | None:

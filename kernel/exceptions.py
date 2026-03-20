@@ -46,6 +46,10 @@ class DomainNotFoundError(KnowledgeError):
     """Requested knowledge domain is not configured."""
 
 
+class AccessDeniedError(KnowledgeError):
+    """Domain access policy denied the request."""
+
+
 class QdrantSearchError(KnowledgeError):
     """Qdrant query failed."""
 
