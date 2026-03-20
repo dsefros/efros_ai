@@ -42,6 +42,10 @@ class KnowledgeError(AIPlatformError):
     """Base knowledge exception."""
 
 
+class DomainNotFoundError(KnowledgeError):
+    """Requested knowledge domain is not configured."""
+
+
 class QdrantSearchError(KnowledgeError):
     """Qdrant query failed."""
 
