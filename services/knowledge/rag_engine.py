@@ -3,6 +3,8 @@ from __future__ import annotations
 from qdrant_client import QdrantClient
 
 from configs.domain_profiles import DomainProfileError
+from services.knowledge.collection_manager import CollectionManager
+from services.knowledge.ingestion import DomainIngestionService
 from configs.settings import Settings, load_settings
 from kernel.exceptions import DomainNotFoundError, QdrantSearchError, RerankerError, ValidationError
 
@@ -16,6 +18,8 @@ class KnowledgeEngine:
         self.regulatory_collection = self.settings.qdrant_regulatory_collection
         self._embedder = None
         self._reranker = None
+        self.collection_manager = CollectionManager(self.qdrant)
+        self.ingestion = DomainIngestionService(self.settings.domain_registry)
 
     def _get_embedder(self):
         if self._embedder is None:
@@ -61,9 +65,24 @@ class KnowledgeEngine:
                 'is_default': domain.name == registry.default_domain_name,
                 'collections': list(domain.collection_names),
                 'description': domain.description,
+                'ingestion': {
+                    'enabled': domain.ingestion.enabled,
+                    'strategy': domain.ingestion.strategy,
+                    'target_collections': list(domain.ingestion.target_collections),
+                },
             }
             for domain in registry.domains
         ]
+
+
+    def ensure_domain_collections(self, domain: str | None = None):
+        domain_profile = self._resolve_domain(domain)
+        if domain_profile is None:
+            raise ValidationError('Collection policy enforcement is unavailable because no domain registry is configured')
+        return self.collection_manager.ensure_domain_collections(domain_profile)
+
+    def plan_ingestion(self, domain: str | None = None, metadata: dict[str, str] | None = None):
+        return self.ingestion.ingest(domain=domain, metadata=metadata)
 
     def _normalize_hits(self, response, collection_name: str):
         points = []
