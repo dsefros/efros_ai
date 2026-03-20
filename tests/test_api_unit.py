@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from api.server import create_app
+from api.server import create_app, _resolve_domain_registry
 from kernel.ai_kernel import AIKernel
 from kernel.exceptions import DomainNotFoundError
 from kernel.module_loader import load_module
@@ -23,9 +23,37 @@ class FakeModelManager:
 
 
 class FakeKnowledge:
+    class SettingsStub:
+        class RegistryStub:
+            class DomainStub:
+                def __init__(self, name, access):
+                    self.name = name
+                    self.access = access
+
+            def __init__(self):
+                from configs.domain_profiles import AccessProfile
+
+                self.domains = (
+                    self.DomainStub('default', AccessProfile(visibility='public', default_action='allow')),
+                    self.DomainStub('finance', AccessProfile(visibility='private', default_action='deny', allowed_roles=('analyst',), allowed_callers=('svc-finance',), allowed_groups=('risk',))),
+                )
+                self.default_domain_name = 'default'
+
+            def get(self, name=None):
+                selected = name or self.default_domain_name
+                for domain in self.domains:
+                    if domain.name == selected:
+                        return domain
+                from configs.domain_profiles import DomainProfileError
+                raise DomainProfileError(f"Unknown domain {selected!r}")
+
+        def __init__(self):
+            self.domain_registry = self.RegistryStub()
+
     def __init__(self):
         self.search_calls = []
         self.answer_calls = []
+        self.settings = self.SettingsStub()
 
     def search(self, query: str, domain: str | None = None, limit_per_collection: int = 5):
         if domain == 'missing':
@@ -76,8 +104,8 @@ class FakeKnowledge:
 
     def list_domains(self):
         return [
-            {'name': 'default', 'is_default': True, 'collections': ['rag_product', 'rag_regulatory'], 'description': 'default domain'},
-            {'name': 'finance', 'is_default': False, 'collections': ['finance_docs'], 'description': None},
+            {'name': 'default', 'is_default': True, 'collections': ['rag_product', 'rag_regulatory'], 'description': 'default domain', 'access': {'visibility': 'public'}},
+            {'name': 'finance', 'is_default': False, 'collections': ['finance_docs'], 'description': None, 'access': {'visibility': 'private'}},
         ]
 
 
@@ -117,6 +145,7 @@ def test_domains_endpoint():
     data = resp.json()
     assert data['domains'][0]['name'] == 'default'
     assert data['domains'][1]['collections'] == ['finance_docs']
+    assert data['domains'][1]['access'] == {'visibility': 'private'}
 
 
 def test_llm():
@@ -144,7 +173,7 @@ def test_pipeline():
 
 def test_rag_search():
     client = build_test_client()
-    resp = client.post('/rag/search', json={'query': 'virtual cash register', 'domain': 'finance'})
+    resp = client.post('/rag/search', json={'query': 'virtual cash register', 'domain': 'finance'}, headers={'x-efros-roles': 'analyst'})
     assert resp.status_code == 200
     data = resp.json()
     assert 'sources' in data
@@ -162,7 +191,7 @@ def test_rag_search_unknown_domain_returns_404():
 
 def test_rag_answer():
     client = build_test_client()
-    resp = client.post('/rag/answer', json={'query': 'virtual cash register', 'model': 'mock', 'domain': 'finance'})
+    resp = client.post('/rag/answer', json={'query': 'virtual cash register', 'model': 'mock', 'domain': 'finance'}, headers={'x-efros-roles': 'analyst'})
     assert resp.status_code == 200
     data = resp.json()
     assert 'answer' in data
@@ -198,3 +227,50 @@ def test_app_lifespan_retains_runtime_and_shuts_it_down():
         assert client.app.state.runtime is runtime
 
     assert runtime.shutdown_calls == 1
+
+
+def test_rag_search_denies_private_domain_without_access_headers():
+    client = build_test_client()
+    resp = client.post('/rag/search', json={'query': 'virtual cash register', 'domain': 'finance'})
+    assert resp.status_code == 403
+    assert 'Access denied for domain' in resp.json()['detail']
+
+
+def test_rag_search_allows_private_domain_with_role_header():
+    client = build_test_client()
+    resp = client.post(
+        '/rag/search',
+        json={'query': 'virtual cash register', 'domain': 'finance'},
+        headers={'x-efros-roles': 'analyst'},
+    )
+    assert resp.status_code == 200
+    assert resp.json()['sources'][0]['collection'] == 'finance'
+
+
+def test_rag_answer_allows_private_domain_with_caller_header():
+    client = build_test_client()
+    resp = client.post(
+        '/rag/answer',
+        json={'query': 'virtual cash register', 'domain': 'finance'},
+        headers={'x-efros-caller': 'svc-finance'},
+    )
+    assert resp.status_code == 200
+    assert resp.json()['domain'] == 'finance'
+
+
+def test_resolve_domain_registry_prefers_knowledge_then_kernel_then_runtime():
+    registry_from_knowledge = object()
+    registry_from_kernel = object()
+    registry_from_runtime = object()
+
+    kernel = AIKernel()
+    kernel.knowledge = type('KnowledgeStub', (), {'settings': type('SettingsStub', (), {'domain_registry': registry_from_knowledge})()})()
+    kernel.domain_registry = registry_from_kernel
+    runtime = type('RuntimeStub', (), {'domain_registry': registry_from_runtime})()
+    assert _resolve_domain_registry(kernel, runtime=runtime) is registry_from_knowledge
+
+    kernel.knowledge = type('KnowledgeStub', (), {})()
+    assert _resolve_domain_registry(kernel, runtime=runtime) is registry_from_kernel
+
+    delattr(kernel, 'domain_registry')
+    assert _resolve_domain_registry(kernel, runtime=runtime) is registry_from_runtime

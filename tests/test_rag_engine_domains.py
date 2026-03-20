@@ -168,6 +168,7 @@ def test_list_domains_reports_configured_domains(monkeypatch, settings_with_doma
             'collections': ['finance_docs', 'finance_regs'],
             'description': None,
             'ingestion': {'enabled': False, 'strategy': 'manual', 'target_collections': ['finance_docs', 'finance_regs']},
+            'access': {'visibility': 'internal'},
         },
         {
             'name': 'support',
@@ -175,5 +176,6 @@ def test_list_domains_reports_configured_domains(monkeypatch, settings_with_doma
             'collections': ['support_docs'],
             'description': None,
             'ingestion': {'enabled': False, 'strategy': 'manual', 'target_collections': ['support_docs']},
+            'access': {'visibility': 'internal'},
         },
     ]

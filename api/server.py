@@ -1,7 +1,10 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
+
+from configs.domain_profiles import DomainProfileError
+from services.knowledge.access_policy import DomainAccessPolicyEvaluator, RequestAccessContext
 
 from kernel.exceptions import (
     AIPlatformError,
@@ -12,6 +15,7 @@ from kernel.exceptions import (
     PipelineStepError,
     KnowledgeError,
     DomainNotFoundError,
+    AccessDeniedError,
 )
 
 
@@ -45,6 +49,8 @@ def _raise_http(e: Exception):
         raise HTTPException(status_code=400, detail=str(e))
     if isinstance(e, DomainNotFoundError):
         raise HTTPException(status_code=404, detail=str(e))
+    if isinstance(e, AccessDeniedError):
+        raise HTTPException(status_code=403, detail=str(e))
     if isinstance(e, ModelNotFoundError):
         raise HTTPException(status_code=404, detail=str(e))
     if isinstance(e, ExecutorNotFoundError):
@@ -61,7 +67,68 @@ def _raise_http(e: Exception):
 
 
 
+def _split_header_values(value: str | None) -> tuple[str, ...]:
+    if value is None:
+        return ()
+    items = []
+    seen = set()
+    for raw in value.split(','):
+        cleaned = raw.strip()
+        if not cleaned or cleaned in seen:
+            continue
+        seen.add(cleaned)
+        items.append(cleaned)
+    return tuple(items)
+
+
+def _build_access_context(request: Request) -> RequestAccessContext:
+    return RequestAccessContext.from_values(
+        caller=request.headers.get('x-efros-caller'),
+        roles=_split_header_values(request.headers.get('x-efros-roles')),
+        groups=_split_header_values(request.headers.get('x-efros-groups')),
+    )
+
+
+def _resolve_domain_registry(kernel, runtime=None):
+    knowledge_settings = getattr(getattr(kernel, 'knowledge', None), 'settings', None)
+    knowledge_registry = getattr(knowledge_settings, 'domain_registry', None)
+    if knowledge_registry is not None:
+        return knowledge_registry
+
+    kernel_registry = getattr(kernel, 'domain_registry', None)
+    if kernel_registry is not None:
+        return kernel_registry
+
+    kernel_settings = getattr(kernel, 'settings', None)
+    kernel_settings_registry = getattr(kernel_settings, 'domain_registry', None)
+    if kernel_settings_registry is not None:
+        return kernel_settings_registry
+
+    runtime_registry = getattr(runtime, 'domain_registry', None)
+    if runtime_registry is not None:
+        return runtime_registry
+
+    runtime_settings = getattr(runtime, 'settings', None)
+    runtime_settings_registry = getattr(runtime_settings, 'domain_registry', None)
+    if runtime_settings_registry is not None:
+        return runtime_settings_registry
+
+    return None
+
+
 def create_app(kernel, model_manager, runtime=None):
+    access_evaluator = DomainAccessPolicyEvaluator(_resolve_domain_registry(kernel, runtime=runtime))
+
+    def enforce_domain_access(domain: str | None, request: Request) -> None:
+        if access_evaluator.registry is None:
+            return
+        try:
+            decision = access_evaluator.evaluate(domain, context=_build_access_context(request))
+        except DomainProfileError as exc:
+            raise DomainNotFoundError(str(exc)) from exc
+        if not decision.allowed:
+            raise AccessDeniedError(f"Access denied for domain '{decision.domain}': {decision.reason}")
+
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         if runtime is not None:
@@ -128,8 +195,9 @@ def create_app(kernel, model_manager, runtime=None):
             _raise_http(e)
 
     @app.post('/rag/search')
-    def rag_search(payload: RagSearchQuery):
+    def rag_search(payload: RagSearchQuery, request: Request):
         try:
+            enforce_domain_access(payload.domain, request)
             limit = payload.limit_per_collection
             hits = kernel.knowledge.search(payload.query, domain=payload.domain, limit_per_collection=limit)
 
@@ -141,8 +209,9 @@ def create_app(kernel, model_manager, runtime=None):
             _raise_http(e)
 
     @app.post('/rag/answer')
-    def rag_answer(payload: RagQuery):
+    def rag_answer(payload: RagQuery, request: Request):
         try:
+            enforce_domain_access(payload.domain, request)
             result = kernel.knowledge.answer(payload.query, domain=payload.domain, model_name=payload.model)
             return result
         except Exception as e:

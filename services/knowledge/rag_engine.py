@@ -4,6 +4,7 @@ from qdrant_client import QdrantClient
 
 from configs.domain_profiles import DomainProfileError
 from services.knowledge.collection_manager import CollectionManager
+from services.knowledge.access_policy import DomainAccessPolicyEvaluator
 from services.knowledge.ingestion import DomainIngestionService
 from configs.settings import Settings, load_settings
 from kernel.exceptions import DomainNotFoundError, QdrantSearchError, RerankerError, ValidationError
@@ -20,6 +21,7 @@ class KnowledgeEngine:
         self._reranker = None
         self.collection_manager = CollectionManager(self.qdrant)
         self.ingestion = DomainIngestionService(self.settings.domain_registry)
+        self.access_policy = DomainAccessPolicyEvaluator(self.settings.domain_registry)
 
     def _get_embedder(self):
         if self._embedder is None:
@@ -51,7 +53,7 @@ class KnowledgeEngine:
                 raise ValidationError('Domain selection is unavailable because no domain registry is configured')
             return None
         try:
-            return registry.get(domain)
+            return self.access_policy.resolve_domain(domain)
         except DomainProfileError as exc:
             raise DomainNotFoundError(str(exc)) from exc
 
@@ -69,6 +71,9 @@ class KnowledgeEngine:
                     'enabled': domain.ingestion.enabled,
                     'strategy': domain.ingestion.strategy,
                     'target_collections': list(domain.ingestion.target_collections),
+                },
+                'access': {
+                    'visibility': domain.access.visibility,
                 },
             }
             for domain in registry.domains

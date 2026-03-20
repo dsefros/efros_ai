@@ -41,7 +41,7 @@ def test_settings_loads_explicit_domain_profiles_from_json():
                 "retrieval": {"top_k_per_collection": 3, "final_top_k": 6},
                 "answering": {"model": "ministral", "temperature": 0.1, "max_tokens": 512},
                 "ingestion": {"enabled": False, "strategy": "manual"},
-                "access": {"visibility": "internal", "required_roles": ["analyst"]},
+                "access": {"visibility": "internal", "required_roles": ["analyst"], "allowed_callers": ["svc-finance"], "allowed_groups": ["risk"]},
             },
             {
                 "name": "support",
@@ -60,6 +60,9 @@ def test_settings_loads_explicit_domain_profiles_from_json():
     assert finance.answering.model == "ministral"
     assert finance.ingestion.strategy == "manual"
     assert finance.access.required_roles == ("analyst",)
+    assert finance.access.allowed_callers == ("svc-finance",)
+    assert finance.access.allowed_groups == ("risk",)
+    assert finance.access.default_action == "deny"
 
 
 def test_domain_registry_returns_default_when_name_omitted():
@@ -132,4 +135,39 @@ def test_load_domain_configuration_rejects_non_object_json():
             regulatory_collection="regulatory",
             top_k_per_collection=5,
             final_top_k=8,
+        )
+
+
+def test_public_access_profile_defaults_to_allow():
+    config = DomainConfiguration.from_mapping(
+        {
+            "domains": [
+                {
+                    "name": "public-docs",
+                    "collections": [{"name": "public_docs"}],
+                    "retrieval": {"top_k_per_collection": 1, "final_top_k": 1},
+                    "access": {"visibility": "public"},
+                }
+            ]
+        },
+        fallback_default_domain="public-docs",
+    )
+
+    assert config.domains[0].access.default_action == "allow"
+
+
+def test_access_profile_rejects_invalid_default_action():
+    with pytest.raises(DomainProfileError, match="default_action"):
+        DomainConfiguration.from_mapping(
+            {
+                "domains": [
+                    {
+                        "name": "alpha",
+                        "collections": [{"name": "alpha_docs"}],
+                        "retrieval": {"top_k_per_collection": 1, "final_top_k": 1},
+                        "access": {"default_action": "maybe"},
+                    }
+                ]
+            },
+            fallback_default_domain="alpha",
         )
