@@ -60,3 +60,6 @@ data/
 *:Zone.Identifier
 
 /models/
+# local tooling / LLM dumps
+collected_code.txt
+collect_*.py
