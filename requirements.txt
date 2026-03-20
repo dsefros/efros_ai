@@ -9,3 +9,8 @@ qdrant-client
 # Optional dependencies: only needed when exercising full RAG search/answer
 # functionality, because the embedder and reranker are loaded lazily.
 sentence-transformers
+
+# Optional dependency: PostgreSQL-backed support history persistence.
+# `psycopg[binary]` is listed for local/developer convenience; deployments can
+# swap to plain `psycopg` if they need to manage libpq/binary choices directly.
+psycopg[binary]
