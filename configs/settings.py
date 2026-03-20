@@ -14,6 +14,11 @@ from configs.domain_profiles import (
 )
 
 from dotenv import load_dotenv
+from services.integrations.redmine_client import (
+    RedmineConfigurationError,
+    normalize_redmine_project_ids,
+    normalize_redmine_status_filters,
+)
 
 
 load_dotenv()
@@ -31,9 +36,9 @@ class RedmineSettings:
     enabled: bool = False
     base_url: str | None = None
     api_key: str | None = None
-    target_status: str | None = None
-    status_list: tuple[str, ...] = ()
-    project_filters: tuple[str, ...] = ()
+    target_status_id: str | None = None
+    status_ids: tuple[str, ...] = ()
+    project_ids: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -161,18 +166,18 @@ class Settings:
 
 def _load_support_integrations(env: Mapping[str, str]) -> SupportIntegrationSettings:
     redmine_enabled = _get_bool(env, "REDMINE_ENABLED", RedmineSettings.enabled)
-    redmine_base_url = _get_optional_url(env, "REDMINE_BASE_URL")
+    redmine_base_url = _get_optional_url_alias(env, "REDMINE_BASE_URL", aliases=("REDMINE_URL",))
     redmine_api_key = _get_raw(env, "REDMINE_API_KEY")
-    redmine_target_status = _get_raw(env, "REDMINE_TARGET_STATUS")
-    redmine_status_list = _get_csv_list(env, "REDMINE_STATUS_LIST")
-    redmine_project_filters = _get_csv_list(env, "REDMINE_PROJECT_FILTERS")
+    redmine_target_status = _get_redmine_status_alias(
+        env,
+        "REDMINE_TARGET_STATUS_ID",
+        aliases=("REDMINE_TARGET_STATUS", "TARGET_STATUS"),
+    )
+    redmine_status_list = _get_redmine_status_list_alias(env, "REDMINE_STATUS_IDS", aliases=("REDMINE_STATUS_LIST",))
+    redmine_project_filters = _get_redmine_project_ids_alias(env, "REDMINE_PROJECT_IDS", aliases=("REDMINE_PROJECT_FILTERS",))
     if redmine_enabled:
         _require_present("REDMINE_BASE_URL", redmine_base_url)
         _require_present("REDMINE_API_KEY", redmine_api_key)
-    if redmine_target_status and redmine_status_list and redmine_target_status not in redmine_status_list:
-        raise SettingsError(
-            "REDMINE_TARGET_STATUS must be included in REDMINE_STATUS_LIST when both are set"
-        )
 
     telegram_enabled = _get_bool(env, "TELEGRAM_ENABLED", TelegramSettings.enabled)
     telegram_bot_token = _get_raw(env, "TELEGRAM_BOT_TOKEN")
@@ -205,9 +210,9 @@ def _load_support_integrations(env: Mapping[str, str]) -> SupportIntegrationSett
             enabled=redmine_enabled,
             base_url=redmine_base_url,
             api_key=redmine_api_key,
-            target_status=redmine_target_status,
-            status_list=redmine_status_list,
-            project_filters=redmine_project_filters,
+            target_status_id=redmine_target_status,
+            status_ids=redmine_status_list,
+            project_ids=redmine_project_filters,
         ),
         telegram=TelegramSettings(
             enabled=telegram_enabled,
@@ -315,6 +320,51 @@ def _get_choice(env: Mapping[str, str], name: str, default: str, valid_values: s
         raise SettingsError(f"{name} must be one of {sorted(valid_values)}, got {value!r}")
     return value
 
+
+
+def _get_optional_url_alias(env: Mapping[str, str], name: str, aliases: tuple[str, ...] = ()) -> str | None:
+    for candidate in (name, *aliases):
+        value = _get_raw(env, candidate)
+        if value is not None:
+            parsed = urlparse(value)
+            if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+                raise SettingsError(f"{candidate} must be a valid http(s) URL, got {value!r}")
+            return value
+    return None
+
+
+def _get_redmine_status_alias(env: Mapping[str, str], name: str, aliases: tuple[str, ...] = ()) -> str | None:
+    for candidate in (name, *aliases):
+        value = _get_raw(env, candidate)
+        if value is not None:
+            try:
+                normalized = normalize_redmine_status_filters((value,))
+            except RedmineConfigurationError as exc:
+                raise SettingsError(str(exc)) from exc
+            return normalized[0]
+    return None
+
+
+def _get_redmine_status_list_alias(env: Mapping[str, str], name: str, aliases: tuple[str, ...] = ()) -> tuple[str, ...]:
+    for candidate in (name, *aliases):
+        raw_values = _get_csv_list(env, candidate)
+        if raw_values:
+            try:
+                return normalize_redmine_status_filters(raw_values)
+            except RedmineConfigurationError as exc:
+                raise SettingsError(str(exc)) from exc
+    return ()
+
+
+def _get_redmine_project_ids_alias(env: Mapping[str, str], name: str, aliases: tuple[str, ...] = ()) -> tuple[int, ...]:
+    for candidate in (name, *aliases):
+        raw_values = _get_csv_list(env, candidate)
+        if raw_values:
+            try:
+                return normalize_redmine_project_ids(raw_values)
+            except RedmineConfigurationError as exc:
+                raise SettingsError(str(exc)) from exc
+    return ()
 
 def _get_optional_url(env: Mapping[str, str], name: str) -> str | None:
     value = _get_raw(env, name)
