@@ -30,6 +30,7 @@ def test_support_module_registers_executor_tool_and_pipeline():
     assert manifest["name"] == "support_module"
     assert "support_agent" in kernel.executors
     assert "search" in kernel.tools.tools
+    assert "redmine_get_issue" in kernel.tools.tools
     assert "demo" in kernel.pipeline_engine.pipelines
 
 

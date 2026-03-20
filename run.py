@@ -13,6 +13,7 @@ from kernel.module_loader import load_module
 from kernel.register_knowledge import register_knowledge
 from services.events.event_bus import EventBus
 from services.history import HISTORY_SERVICE_NAME, HistoryPersistenceError, build_history_repository
+from services.integrations import REDMINE_SERVICE_NAME, build_redmine_service
 from services.jobs.job_queue import JobQueue, Worker
 from services.models.model_manager import create_default_manager
 
@@ -60,6 +61,9 @@ def build_runtime(settings: Settings | None = None) -> AppRuntime:
     history_repository = build_history_repository(settings)
     if history_repository is not None:
         kernel.register_service(HISTORY_SERVICE_NAME, history_repository)
+    redmine_service = build_redmine_service(settings)
+    if redmine_service is not None:
+        kernel.register_service(REDMINE_SERVICE_NAME, redmine_service)
     load_module(kernel, "modules/support_module")
     worker.start()
 
