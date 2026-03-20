@@ -1,0 +1,2213 @@
+.
+├── app
+│   └── main.py
+├── channels
+│   ├── __init__.py
+│   ├── base_channel.py
+│   ├── cli_channel.py
+│   └── redmine_channel.py
+├── clients
+│   ├── gigachat
+│   │   └── client.py
+│   ├── redmine
+│   │   └── client.py
+│   ├── telegram
+│   │   └── notifier.py
+│   ├── yandex_gpt
+│   │   └── client.py
+│   └── __init__.py
+├── config
+│   ├── config.py
+│   ├── project_mapping.json.example
+│   └── telegram_mapping.json.example
+├── core
+│   ├── __init__.py
+│   └── assistant_core.py
+├── data
+│   ├── documents
+│   └── processed
+├── documents
+│   ├── markdown
+│   │   ├── 0cebcbe2-4499-44bd-901b-05e7765ec191.md
+│   │   ├── 0cebcbe2-4499-44bd-901b-05e7765ec191.md:Zone.Identifier
+│   │   ├── 0cebcbe2-4499-44bd-901b-05e7765ec191.md:Zone.Identifier:Zone.Identifier
+│   │   ├── 1341bda5-271a-4e4b-88f9-94ee86a3378d.md
+│   │   ├── 1341bda5-271a-4e4b-88f9-94ee86a3378d.md:Zone.Identifier
+│   │   ├── 1341bda5-271a-4e4b-88f9-94ee86a3378d.md:Zone.Identifier:Zone.Identifier
+│   │   ├── 70a1731c-8165-4ad9-9feb-9c72b4751aae.md
+│   │   ├── 70a1731c-8165-4ad9-9feb-9c72b4751aae.md:Zone.Identifier
+│   │   ├── 70a1731c-8165-4ad9-9feb-9c72b4751aae.md:Zone.Identifier:Zone.Identifier
+│   │   ├── 80958e2c-a830-466b-a995-8957d70535d9.md
+│   │   ├── 80958e2c-a830-466b-a995-8957d70535d9.md:Zone.Identifier
+│   │   ├── 80958e2c-a830-466b-a995-8957d70535d9.md:Zone.Identifier:Zone.Identifier
+│   │   ├── 910eb81f-bfbe-4418-bcd1-1deb1443a066.md
+│   │   ├── 910eb81f-bfbe-4418-bcd1-1deb1443a066.md:Zone.Identifier
+│   │   ├── 910eb81f-bfbe-4418-bcd1-1deb1443a066.md:Zone.Identifier:Zone.Identifier
+│   │   ├── Aisino_SW_Setup_v.1.03.md
+│   │   ├── Aisino_SW_Setup_v.1.03.md:Zone.Identifier
+│   │   ├── Aisino_SW_Setup_v.1.03.md:Zone.Identifier:Zone.Identifier
+│   │   ├── Castles_SW_Setup_v.1.03.md
+│   │   ├── Castles_SW_Setup_v.1.03.md:Zone.Identifier
+│   │   ├── Castles_SW_Setup_v.1.03.md:Zone.Identifier:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_2_Security_and_Key_Management_20120607061923900.md
+│   │   ├── EMV_v4.3_Book_2_Security_and_Key_Management_20120607061923900.md:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_2_Security_and_Key_Management_20120607061923900.md:Zone.Identifier:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_3_Application_Specification_20120607062110791.md
+│   │   ├── EMV_v4.3_Book_3_Application_Specification_20120607062110791.md:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_3_Application_Specification_20120607062110791.md:Zone.Identifier:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_4_Other_Interfaces_20120607062305603.md
+│   │   ├── EMV_v4.3_Book_4_Other_Interfaces_20120607062305603.md:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_4_Other_Interfaces_20120607062305603.md:Zone.Identifier:Zone.Identifier
+│   │   ├── MultiPOS_General_v.1.17.md
+│   │   ├── MultiPOS_General_v.1.17.md:Zone.Identifier
+│   │   ├── MultiPOS_General_v.1.17.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SAN_Setup_2.01.md
+│   │   ├── SAN_Setup_2.01.md:Zone.Identifier
+│   │   ├── SAN_Setup_2.01.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SSP_PaymentService_1.9.8.md
+│   │   ├── SSP_PaymentService_1.9.8.md:Zone.Identifier
+│   │   ├── SSP_PaymentService_1.9.8.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyCashReg_Jar_v.1.00 (1).md
+│   │   ├── SkyCashReg_Jar_v.1.00 (1).md:Zone.Identifier
+│   │   ├── SkyCashReg_Jar_v.1.00 (1).md:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyCashReg_Protocol_v.1.00.md
+│   │   ├── SkyCashReg_Protocol_v.1.00.md:Zone.Identifier
+│   │   ├── SkyCashReg_Protocol_v.1.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyCashReg_v.1.00.md
+│   │   ├── SkyCashReg_v.1.00.md:Zone.Identifier
+│   │   ├── SkyCashReg_v.1.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyCashReg_С_v.1.00.md
+│   │   ├── SkyCashReg_С_v.1.00.md:Zone.Identifier
+│   │   ├── SkyCashReg_С_v.1.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyHSM_General_v.1.01.md
+│   │   ├── SkyHSM_General_v.1.01.md:Zone.Identifier
+│   │   ├── SkyHSM_General_v.1.01.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyMDM_lua_receipts_v.0.01.md
+│   │   ├── SkyMDM_lua_receipts_v.0.01.md:Zone.Identifier
+│   │   ├── SkyMDM_lua_receipts_v.0.01.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyRKM_Offline_Setup_v.2.00.md
+│   │   ├── SkyRKM_Offline_Setup_v.2.00.md:Zone.Identifier
+│   │   ├── SkyRKM_Offline_Setup_v.2.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyRKM_Offline_UserGuide_2.00.md
+│   │   ├── SkyRKM_Offline_UserGuide_2.00.md:Zone.Identifier
+│   │   ├── SkyRKM_Offline_UserGuide_2.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyRKM_Online_Setup_v.2.00.md
+│   │   ├── SkyRKM_Online_Setup_v.2.00.md:Zone.Identifier
+│   │   ├── SkyRKM_Online_Setup_v.2.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyRKM_Online_UserGuide_2.00.md
+│   │   ├── SkyRKM_Online_UserGuide_2.00.md:Zone.Identifier
+│   │   ├── SkyRKM_Online_UserGuide_2.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersLKM_General_v.2.00.md
+│   │   ├── SomersLKM_General_v.2.00.md:Zone.Identifier
+│   │   ├── SomersLKM_General_v.2.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersMDM_Admin v.2.01.md
+│   │   ├── SomersMDM_Admin v.2.01.md:Zone.Identifier
+│   │   ├── SomersMDM_Admin v.2.01.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersMDM_Int v.2.01.md
+│   │   ├── SomersMDM_Int v.2.01.md:Zone.Identifier
+│   │   ├── SomersMDM_Int v.2.01.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersMDM_Setup v.3.00.md
+│   │   ├── SomersMDM_Setup v.3.00.md:Zone.Identifier
+│   │   ├── SomersMDM_Setup v.3.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersMDM_User v.3.00.md
+│   │   ├── SomersMDM_User v.3.00.md:Zone.Identifier
+│   │   ├── SomersMDM_User v.3.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersMDM_lua_receipts_v.2.02.md
+│   │   ├── SomersMDM_lua_receipts_v.2.02.md:Zone.Identifier
+│   │   ├── SomersMDM_lua_receipts_v.2.02.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersPOS(Android)_Admin v.3.00.md
+│   │   ├── SomersPOS(Android)_Admin v.3.00.md:Zone.Identifier
+│   │   ├── SomersPOS(Android)_Admin v.3.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersPOS(Android)_User v.3.00.md
+│   │   ├── SomersPOS(Android)_User v.3.00.md:Zone.Identifier
+│   │   ├── SomersPOS(Android)_User v.3.00.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersPOS(Linux)_Admin_v.2.03.md
+│   │   ├── SomersPOS(Linux)_Admin_v.2.03.md:Zone.Identifier
+│   │   ├── SomersPOS(Linux)_Admin_v.2.03.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersPOS(Linux)_User_v.2.02.md
+│   │   ├── SomersPOS(Linux)_User_v.2.02.md:Zone.Identifier
+│   │   ├── SomersPOS(Linux)_User_v.2.02.md:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersPOS_User_v.2.01.md
+│   │   ├── SomersPOS_User_v.2.01.md:Zone.Identifier
+│   │   ├── SomersPOS_User_v.2.01.md:Zone.Identifier:Zone.Identifier
+│   │   ├── acc58b20-357f-4269-8fd2-4e3fb208f23a.md
+│   │   ├── acc58b20-357f-4269-8fd2-4e3fb208f23a.md:Zone.Identifier
+│   │   ├── acc58b20-357f-4269-8fd2-4e3fb208f23a.md:Zone.Identifier:Zone.Identifier
+│   │   ├── b3103b7b-c7b4-44d3-8d9c-f70d48e4b2d9.md
+│   │   ├── b3103b7b-c7b4-44d3-8d9c-f70d48e4b2d9.md:Zone.Identifier
+│   │   ├── b3103b7b-c7b4-44d3-8d9c-f70d48e4b2d9.md:Zone.Identifier:Zone.Identifier
+│   │   ├── d90cc149-edf6-4f75-aa01-4fdd4494af12.md
+│   │   ├── d90cc149-edf6-4f75-aa01-4fdd4494af12.md:Zone.Identifier
+│   │   ├── d90cc149-edf6-4f75-aa01-4fdd4494af12.md:Zone.Identifier:Zone.Identifier
+│   │   ├── Бюллетень_безопасности_03_2022_2022_04_05_Мир_ПСП.md
+│   │   ├── Бюллетень_безопасности_03_2022_2022_04_05_Мир_ПСП.md:Zone.Identifier
+│   │   ├── Бюллетень_безопасности_03_2022_2022_04_05_Мир_ПСП.md:Zone.Identifier:Zone.Identifier
+│   │   ├── СБП.md
+│   │   ├── СБП.md:Zone.Identifier
+│   │   └── СБП.md:Zone.Identifier:Zone.Identifier
+│   ├── pdfs
+│   │   ├── 0cebcbe2-4499-44bd-901b-05e7765ec191.pdf
+│   │   ├── 0cebcbe2-4499-44bd-901b-05e7765ec191.pdf:Zone.Identifier
+│   │   ├── 0cebcbe2-4499-44bd-901b-05e7765ec191.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── 1341bda5-271a-4e4b-88f9-94ee86a3378d.pdf
+│   │   ├── 1341bda5-271a-4e4b-88f9-94ee86a3378d.pdf:Zone.Identifier
+│   │   ├── 1341bda5-271a-4e4b-88f9-94ee86a3378d.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── 70a1731c-8165-4ad9-9feb-9c72b4751aae.pdf
+│   │   ├── 70a1731c-8165-4ad9-9feb-9c72b4751aae.pdf:Zone.Identifier
+│   │   ├── 70a1731c-8165-4ad9-9feb-9c72b4751aae.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── 80958e2c-a830-466b-a995-8957d70535d9.pdf
+│   │   ├── 80958e2c-a830-466b-a995-8957d70535d9.pdf:Zone.Identifier
+│   │   ├── 80958e2c-a830-466b-a995-8957d70535d9.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── 910eb81f-bfbe-4418-bcd1-1deb1443a066.pdf
+│   │   ├── 910eb81f-bfbe-4418-bcd1-1deb1443a066.pdf:Zone.Identifier
+│   │   ├── 910eb81f-bfbe-4418-bcd1-1deb1443a066.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── Aisino_SW_Setup_v.1.03.pdf
+│   │   ├── Aisino_SW_Setup_v.1.03.pdf:Zone.Identifier
+│   │   ├── Aisino_SW_Setup_v.1.03.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── Castles_SW_Setup_v.1.03.pdf
+│   │   ├── Castles_SW_Setup_v.1.03.pdf:Zone.Identifier
+│   │   ├── Castles_SW_Setup_v.1.03.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_2_Security_and_Key_Management_20120607061923900.pdf
+│   │   ├── EMV_v4.3_Book_2_Security_and_Key_Management_20120607061923900.pdf:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_2_Security_and_Key_Management_20120607061923900.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_3_Application_Specification_20120607062110791.pdf
+│   │   ├── EMV_v4.3_Book_3_Application_Specification_20120607062110791.pdf:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_3_Application_Specification_20120607062110791.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_4_Other_Interfaces_20120607062305603.pdf
+│   │   ├── EMV_v4.3_Book_4_Other_Interfaces_20120607062305603.pdf:Zone.Identifier
+│   │   ├── EMV_v4.3_Book_4_Other_Interfaces_20120607062305603.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── MultiPOS_General_v.1.17.pdf
+│   │   ├── MultiPOS_General_v.1.17.pdf:Zone.Identifier
+│   │   ├── MultiPOS_General_v.1.17.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SAN_Setup_2.01.pdf
+│   │   ├── SAN_Setup_2.01.pdf:Zone.Identifier
+│   │   ├── SAN_Setup_2.01.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SSP_PaymentService_1.9.8.pdf
+│   │   ├── SSP_PaymentService_1.9.8.pdf:Zone.Identifier
+│   │   ├── SSP_PaymentService_1.9.8.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyCashReg_Jar_v.1.00 (1).pdf
+│   │   ├── SkyCashReg_Jar_v.1.00 (1).pdf:Zone.Identifier
+│   │   ├── SkyCashReg_Jar_v.1.00 (1).pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyCashReg_Protocol_v.1.00.pdf
+│   │   ├── SkyCashReg_Protocol_v.1.00.pdf:Zone.Identifier
+│   │   ├── SkyCashReg_Protocol_v.1.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyCashReg_v.1.00.pdf
+│   │   ├── SkyCashReg_v.1.00.pdf:Zone.Identifier
+│   │   ├── SkyCashReg_v.1.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyCashReg_С_v.1.00.pdf
+│   │   ├── SkyCashReg_С_v.1.00.pdf:Zone.Identifier
+│   │   ├── SkyCashReg_С_v.1.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyHSM_General_v.1.01.pdf
+│   │   ├── SkyHSM_General_v.1.01.pdf:Zone.Identifier
+│   │   ├── SkyHSM_General_v.1.01.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyMDM_lua_receipts_v.0.01.pdf
+│   │   ├── SkyMDM_lua_receipts_v.0.01.pdf:Zone.Identifier
+│   │   ├── SkyMDM_lua_receipts_v.0.01.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyRKM_Offline_Setup_v.2.00.pdf
+│   │   ├── SkyRKM_Offline_Setup_v.2.00.pdf:Zone.Identifier
+│   │   ├── SkyRKM_Offline_Setup_v.2.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyRKM_Offline_UserGuide_2.00.pdf
+│   │   ├── SkyRKM_Offline_UserGuide_2.00.pdf:Zone.Identifier
+│   │   ├── SkyRKM_Offline_UserGuide_2.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyRKM_Online_Setup_v.2.00.pdf
+│   │   ├── SkyRKM_Online_Setup_v.2.00.pdf:Zone.Identifier
+│   │   ├── SkyRKM_Online_Setup_v.2.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SkyRKM_Online_UserGuide_2.00.pdf
+│   │   ├── SkyRKM_Online_UserGuide_2.00.pdf:Zone.Identifier
+│   │   ├── SkyRKM_Online_UserGuide_2.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersLKM_General_v.2.00.pdf
+│   │   ├── SomersLKM_General_v.2.00.pdf:Zone.Identifier
+│   │   ├── SomersLKM_General_v.2.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersMDM_Admin v.2.01.pdf
+│   │   ├── SomersMDM_Admin v.2.01.pdf:Zone.Identifier
+│   │   ├── SomersMDM_Admin v.2.01.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersMDM_Int v.2.01.pdf
+│   │   ├── SomersMDM_Int v.2.01.pdf:Zone.Identifier
+│   │   ├── SomersMDM_Int v.2.01.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersMDM_Setup v.3.00.pdf
+│   │   ├── SomersMDM_Setup v.3.00.pdf:Zone.Identifier
+│   │   ├── SomersMDM_Setup v.3.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersMDM_User v.3.00.pdf
+│   │   ├── SomersMDM_User v.3.00.pdf:Zone.Identifier
+│   │   ├── SomersMDM_User v.3.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersMDM_lua_receipts_v.2.02.pdf
+│   │   ├── SomersMDM_lua_receipts_v.2.02.pdf:Zone.Identifier
+│   │   ├── SomersMDM_lua_receipts_v.2.02.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersPOS(Android)_Admin v.3.00.pdf
+│   │   ├── SomersPOS(Android)_Admin v.3.00.pdf:Zone.Identifier
+│   │   ├── SomersPOS(Android)_Admin v.3.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersPOS(Android)_User v.3.00.pdf
+│   │   ├── SomersPOS(Android)_User v.3.00.pdf:Zone.Identifier
+│   │   ├── SomersPOS(Android)_User v.3.00.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersPOS(Linux)_Admin_v.2.03.pdf
+│   │   ├── SomersPOS(Linux)_Admin_v.2.03.pdf:Zone.Identifier
+│   │   ├── SomersPOS(Linux)_Admin_v.2.03.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersPOS(Linux)_User_v.2.02.pdf
+│   │   ├── SomersPOS(Linux)_User_v.2.02.pdf:Zone.Identifier
+│   │   ├── SomersPOS(Linux)_User_v.2.02.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── SomersPOS_User_v.2.01.pdf
+│   │   ├── SomersPOS_User_v.2.01.pdf:Zone.Identifier
+│   │   ├── SomersPOS_User_v.2.01.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── acc58b20-357f-4269-8fd2-4e3fb208f23a.pdf
+│   │   ├── acc58b20-357f-4269-8fd2-4e3fb208f23a.pdf:Zone.Identifier
+│   │   ├── acc58b20-357f-4269-8fd2-4e3fb208f23a.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── b3103b7b-c7b4-44d3-8d9c-f70d48e4b2d9.pdf
+│   │   ├── b3103b7b-c7b4-44d3-8d9c-f70d48e4b2d9.pdf:Zone.Identifier
+│   │   ├── b3103b7b-c7b4-44d3-8d9c-f70d48e4b2d9.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── d90cc149-edf6-4f75-aa01-4fdd4494af12.pdf
+│   │   ├── d90cc149-edf6-4f75-aa01-4fdd4494af12.pdf:Zone.Identifier
+│   │   ├── d90cc149-edf6-4f75-aa01-4fdd4494af12.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── Бюллетень_безопасности_03_2022_2022_04_05_Мир_ПСП.pdf
+│   │   ├── Бюллетень_безопасности_03_2022_2022_04_05_Мир_ПСП.pdf:Zone.Identifier
+│   │   ├── Бюллетень_безопасности_03_2022_2022_04_05_Мир_ПСП.pdf:Zone.Identifier:Zone.Identifier
+│   │   ├── СБП.pdf
+│   │   ├── СБП.pdf:Zone.Identifier
+│   │   └── СБП.pdf:Zone.Identifier:Zone.Identifier
+│   ├── ingeners_projects.txt
+│   └── ingeners_projects.txt:Zone.Identifier
+├── generation
+│   ├── __init__.py
+│   └── llm_client.py
+├── logs
+│   ├── assistant.log
+│   └── main.log
+├── models
+│   ├── models--BAAI--bge-m3
+│   │   ├── blobs
+│   │   │   ├── 0140ba1eac83a3c9b857d64baba91969d988624b
+│   │   │   ├── 1fba91c78a6c8e17227058ab6d4d3acb5d8630a9
+│   │   │   ├── 21106b6d7dab2952c1d496fb21d5dc9db75c28ed361a05f5020bbba27810dd08
+│   │   │   ├── 952a9b81c0bfd99800fabf352f69c7ccd46c5e43
+│   │   │   ├── 993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e
+│   │   │   ├── 9bd85925f325e25246d94c4918dc02ab98f2a1b7
+│   │   │   ├── b1879d702821e753ffe4245048eee415d54a9385
+│   │   │   ├── b5e0ce3470abf5ef3831aa1bd5553b486803e83251590ab7ff35a117cf6aad38
+│   │   │   ├── cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865
+│   │   │   ├── dc69ac559dcba2694012009aaa108c614541789a
+│   │   │   ├── e5a320176edd6ee1cfb256e68ee5ac0004de9447
+│   │   │   └── e6eda1c72da8f9dc30fdd9b69c73d35af3b7a7ad
+│   │   ├── refs
+│   │   │   ├── refs
+│   │   │   │   └── pr
+│   │   │   │       └── 130
+│   │   │   └── main
+│   │   └── snapshots
+│   │       ├── 5617a9f61b028005a4858fdac845db406aefb181
+│   │       │   ├── 1_Pooling
+│   │       │   │   └── config.json -> ../../../blobs/9bd85925f325e25246d94c4918dc02ab98f2a1b7
+│   │       │   ├── README.md -> ../../blobs/e5a320176edd6ee1cfb256e68ee5ac0004de9447
+│   │       │   ├── config.json -> ../../blobs/e6eda1c72da8f9dc30fdd9b69c73d35af3b7a7ad
+│   │       │   ├── config_sentence_transformers.json -> ../../blobs/1fba91c78a6c8e17227058ab6d4d3acb5d8630a9
+│   │       │   ├── modules.json -> ../../blobs/952a9b81c0bfd99800fabf352f69c7ccd46c5e43
+│   │       │   ├── pytorch_model.bin -> ../../blobs/b5e0ce3470abf5ef3831aa1bd5553b486803e83251590ab7ff35a117cf6aad38
+│   │       │   ├── sentence_bert_config.json -> ../../blobs/0140ba1eac83a3c9b857d64baba91969d988624b
+│   │       │   ├── sentencepiece.bpe.model -> ../../blobs/cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865
+│   │       │   ├── special_tokens_map.json -> ../../blobs/b1879d702821e753ffe4245048eee415d54a9385
+│   │       │   ├── tokenizer.json -> ../../blobs/21106b6d7dab2952c1d496fb21d5dc9db75c28ed361a05f5020bbba27810dd08
+│   │       │   └── tokenizer_config.json -> ../../blobs/dc69ac559dcba2694012009aaa108c614541789a
+│   │       └── 9a0624b896d81da7492a910ffa53731274b6cf3d
+│   │           └── model.safetensors -> ../../blobs/993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e
+│   └── models--BAAI--bge-reranker-v2-m3
+│       ├── blobs
+│       │   ├── 328a00a9a560aadcf2a3064f917517359eb3cc26
+│       │   ├── 553540879ec61aea21df00434c984c0f760a3fcc
+│       │   ├── 69564b696052886ed0ac63fa393e928384e0f8caada38c1f4864a9bfbf379c15
+│       │   ├── 9f62673cb00ec41dcec8947b9ed16f6f2eb23ba2
+│       │   ├── b1879d702821e753ffe4245048eee415d54a9385
+│       │   ├── cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865
+│       │   ├── d9e3e081faff1eefb84019509b2f5558fd74c1a05a2c7db22f74174fcedb5286
+│       │   └── d9e3e081faff1eefb84019509b2f5558fd74c1a05a2c7db22f74174fcedb5286.incomplete
+│       ├── refs
+│       │   └── main
+│       └── snapshots
+│           └── 953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e
+│               ├── README.md -> ../../blobs/553540879ec61aea21df00434c984c0f760a3fcc
+│               ├── config.json -> ../../blobs/9f62673cb00ec41dcec8947b9ed16f6f2eb23ba2
+│               ├── model.safetensors -> ../../blobs/d9e3e081faff1eefb84019509b2f5558fd74c1a05a2c7db22f74174fcedb5286
+│               ├── sentencepiece.bpe.model -> ../../blobs/cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865
+│               ├── special_tokens_map.json -> ../../blobs/b1879d702821e753ffe4245048eee415d54a9385
+│               ├── tokenizer.json -> ../../blobs/69564b696052886ed0ac63fa393e928384e0f8caada38c1f4864a9bfbf379c15
+│               └── tokenizer_config.json -> ../../blobs/328a00a9a560aadcf2a3064f917517359eb3cc26
+├── providers
+│   ├── __init__.py
+│   ├── base_provider.py
+│   ├── gigachat_provider.py
+│   ├── provider_factory.py
+│   ├── rag_provider.py
+│   └── yandex_provider.py
+├── retrieval
+│   ├── __init__.py
+│   ├── reranker.py
+│   └── vector_store.py
+├── scripts
+│   └── setup_db.py
+├── storage
+│   ├── __init__.py
+│   └── postgres_storage.py
+├── utils
+│   └── logger.py
+├── collect_py.py
+├── collect_py.py:Zone.Identifier
+├── collected_code.txt
+└── requirements.txt
+
+38 directories, 314 files
+=== Структура проекта ===
+
+=== Содержимое файлов ===
+
+***
+config/config.py
+***
+# config/config.py
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+class Config:
+    def __init__(self):
+        load_dotenv()
+        self._init_paths()
+        self._init_redmine()
+        self._init_llm()
+        self._init_storage()
+        self._init_logging()
+        self._init_telegram()
+    
+    def _init_paths(self):
+        self.base_dir = Path(__file__).parent.parent
+        self.logs_dir = self.base_dir / "logs"
+        self.models_dir = self.base_dir / "models"
+        self.data_dir = self.base_dir / "data"
+        self.documents_dir = self.data_dir / "documents"
+        
+        # Создаем директории если их нет
+        for dir_path in [self.logs_dir, self.models_dir, self.data_dir, self.documents_dir]:
+            dir_path.mkdir(exist_ok=True, parents=True)
+    
+    def _init_redmine(self):
+        self.redmine_url = os.getenv("REDMINE_URL", "")
+        self.redmine_api_key = os.getenv("REDMINE_API_KEY", "")
+        self.target_status = os.getenv("TARGET_STATUS", "150")
+        self.project_mapping_file = os.getenv("PROJECT_MAPPING_FILE", "config/project_mapping.json")
+    
+    def _init_llm(self):
+        self.ai_provider = os.getenv("AI_PROVIDER", "rag")  # rag, yandexgpt, gigachat
+        self.model_path = os.getenv("MODEL_PATH", "/home/dsefros/ai-assistant-core/models/mistral-7b-instruct-v0.2.Q4_K_M.gguf")
+        self.n_ctx = int(os.getenv("N_CTX", "8192"))
+        self.n_gpu_layers = int(os.getenv("N_GPU_LAYERS", "40"))
+    
+    def _init_storage(self):
+        self.pg_host = os.getenv("PG_HOST", "localhost")
+        self.pg_port = os.getenv("PG_PORT", "5432")
+        self.pg_db = os.getenv("PG_DB", "ai_assistant")
+        self.pg_user = os.getenv("PG_USER", "ai_assistant_user")
+        self.pg_password = os.getenv("PG_PASSWORD", "secure_ai_password_456")
+    
+    def _init_telegram(self):
+        self.telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+        self.telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
+        self.telegram_mapping_file = os.getenv("TELEGRAM_MAPPING_FILE", "config/telegram_mapping.json")
+    
+    def _init_logging(self):
+        import logging
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.StreamHandler(),
+                logging.FileHandler(self.logs_dir / 'assistant.log')
+            ]
+        )
+    
+    def validate(self):
+        """Проверка критически важных настроек"""
+        if not self.redmine_url or not self.redmine_api_key:
+            raise ValueError("Redmine URL and API key are required")
+        
+        if self.ai_provider == "rag":
+            if not os.path.exists(self.model_path):
+                raise ValueError(f"Model file not found at {self.model_path}")
+            if not os.access(self.model_path, os.R_OK):
+                raise ValueError(f"Model file is not readable: {self.model_path}")
+        
+        # Проверка подключения к Qdrant (опционально)
+        # Проверка подключения к PostgreSQL (опционально)
+
+***
+
+***
+providers/__init__.py
+***
+# providers/__init__.py
+
+***
+
+***
+providers/base_provider.py
+***
+# providers/base_provider.py
+from abc import ABC, abstractmethod
+from typing import Dict, List, Any, Optional
+
+class BaseProvider(ABC):
+    """Базовый интерфейс для всех провайдеров генерации ответов"""
+    
+    @abstractmethod
+    def generate_answer(self, query: str, context: Optional[Dict] = None) -> str:
+        """Генерирует ответ на основе запроса и контекста"""
+        pass
+    
+    @abstractmethod
+    def get_provider_name(self) -> str:
+        """Возвращает имя провайдера для логирования и маршрутизации"""
+        pass
+    
+    def get_context(self, query: str) -> Optional[Dict]:
+        """Получает контекст для провайдера (опционально, для RAG)"""
+        return None
+    
+    def get_sources(self, context: Dict) -> List[Dict]:
+        """Извлекает источники из контекста (для RAG)"""
+        return []
+
+
+***
+
+***
+providers/gigachat_provider.py
+***
+# providers/gigachat_provider.py
+from .base_provider import BaseProvider
+from clients.gigachat.client import GigaChatClient
+import logging
+from typing import Dict, Any, Optional, List
+
+class GigaChatProvider(BaseProvider):
+    """Адаптер для GigaChat клиента"""
+    
+    def __init__(self, config):
+        self.logger = logging.getLogger(__name__)
+        self.gigachat_client = GigaChatClient(config)
+        self.config = config
+    
+    def get_provider_name(self) -> str:
+        return "gigachat"
+    
+    def generate_answer(self, query: str, context: Optional[Dict] = None) -> str:
+        """Генерирует ответ с помощью GigaChat"""
+        self.logger.info(f"☁️ Generating GigaChat answer for: {query[:100]}...")
+        
+        # Создаем фейковый issue для совместимости
+        fake_issue = {
+            "ID": 0,
+            "Заголовок": "AI Query",
+            "description": query,
+            "Статус": "Новая",
+            "Ответственный": "AI Assistant"
+        }
+        
+        answer = self.gigachat_client.analyze_issue(fake_issue, [])
+        self.logger.info(f"✅ GigaChat answer generated: {answer[:100]}...")
+        
+        return answer
+
+***
+
+***
+providers/provider_factory.py
+***
+# providers/provider_factory.py
+import os
+from .base_provider import BaseProvider
+from .rag_provider import RAGProvider
+from .yandex_provider import YandexProvider
+from .gigachat_provider import GigaChatProvider
+import logging
+
+class ProviderFactory:
+    """Фабрика для создания провайдеров"""
+    
+    def __init__(self, config):
+        self.config = config
+        self.providers = {}
+        self.logger = logging.getLogger(__name__)
+        self._register_providers()
+    
+    def _register_providers(self):
+        """Регистрирует все доступные провайдеры"""
+        self.logger.info("🔧 Registering providers...")
+        
+        # RAG провайдер (всегда доступен если Qdrant работает)
+        try:
+            self.providers['rag'] = RAGProvider(self.config)
+            self.logger.info("✅ RAG provider registered")
+        except Exception as e:
+            self.logger.error(f"❌ Failed to register RAG provider: {e}")
+        
+        # YandexGPT провайдер (если настроен в config)
+        if self.config.ai_provider == 'yandexgpt' or 'YANDEX_API_KEY' in os.environ:
+            try:
+                self.providers['yandex'] = YandexProvider(self.config)
+                self.logger.info("✅ Yandex provider registered")
+            except Exception as e:
+                self.logger.error(f"❌ Failed to register Yandex provider: {e}")
+        
+        # GigaChat провайдер (если настроен в config)
+        if self.config.ai_provider == 'gigachat' or 'GIGACHAT_API_KEY' in os.environ:
+            try:
+                self.providers['gigachat'] = GigaChatProvider(self.config)
+                self.logger.info("✅ GigaChat provider registered")
+            except Exception as e:
+                self.logger.error(f"❌ Failed to register GigaChat provider: {e}")
+    
+    def get_provider(self, provider_name: str) -> BaseProvider:
+        """Получает провайдера по имени"""
+        if provider_name not in self.providers:
+            available = ", ".join(self.providers.keys())
+            raise ValueError(f"Provider '{provider_name}' not available. Available providers: {available}")
+        
+        return self.providers[provider_name]
+    
+    def get_default_provider(self, channel: str) -> BaseProvider:
+        """Получает провайдера по умолчанию для канала"""
+        # Конфигурация по умолчанию для разных каналов
+        channel_defaults = {
+            'redmine': 'rag',    # Для Redmine используем RAG по умолчанию
+            'cli': 'rag',        # Для CLI используем RAG
+            'telegram': 'yandex' # Для Telegram используем Yandex (пока)
+        }
+        
+        provider_name = channel_defaults.get(channel, 'rag')
+        return self.get_provider(provider_name)
+
+***
+
+***
+providers/rag_provider.py
+***
+# providers/rag_provider.py
+from .base_provider import BaseProvider
+from retrieval.vector_store import QdrantVectorStore
+from retrieval.reranker import Reranker
+from generation.llm_client import LLMClient
+import logging
+from typing import Dict, List, Any, Optional
+
+class RAGProvider(BaseProvider):
+    """Провайдер для локальной RAG-системы"""
+    
+    def __init__(self, config):
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("🚀 Initializing RAG Provider...")
+        
+        # Инициализация компонентов RAG
+        self.product_store = QdrantVectorStore(collection_name="rag_product")
+        self.regulatory_store = QdrantVectorStore(collection_name="rag_regulatory")
+        self.reranker = Reranker()
+        # Передаем строковый путь к модели
+        self.llm = LLMClient(model_path=config.model_path)
+        
+        self.logger.info("✅ RAG Provider initialized successfully")
+    
+    def get_provider_name(self) -> str:
+        return "rag"
+    
+    def get_context(self, query: str) -> Dict[str, Any]:
+        """Получает гибридный контекст из обеих баз"""
+        self.logger.info(f"🔍 Getting context for query: {query[:100]}...")
+        
+        # Получаем релевантные документы из обеих коллекций
+        product_docs = self.product_store.search(query, top_k=20)
+        regulatory_docs = self.regulatory_store.search(query, top_k=20)
+        
+        # Объединяем и реранжируем
+        all_docs = []
+        for doc in product_docs:
+            doc["source_db"] = "rag_product"
+            all_docs.append(doc)
+        
+        for doc in regulatory_docs:
+            doc["source_db"] = "rag_regulatory"
+            all_docs.append(doc)
+        
+        # Применяем реранкинг
+        reranked_docs = self.reranker.rerank(query, all_docs, top_k=40)
+        
+        # Реализуем логику 5+3 как в оригинальном app.py
+        product_reranked = [r for r in reranked_docs if r["source_db"] == "rag_product"]
+        regulatory_reranked = [r for r in reranked_docs if r["source_db"] == "rag_regulatory"]
+        
+        final_context = []
+        # Берём максимум 5 из продуктовой базы
+        product_limit = min(5, len(product_reranked))
+        final_context.extend(product_reranked[:product_limit])
+        
+        # Берём максимум 3 из регуляторной базы
+        regulatory_limit = min(3, len(regulatory_reranked))
+        final_context.extend(regulatory_reranked[:regulatory_limit])
+        
+        # Если набрали меньше 8, добираем из оставшихся
+        remaining_slots = 8 - len(final_context)
+        if remaining_slots > 0:
+            other_results = []
+            if len(product_reranked) > product_limit:
+                other_results.extend(product_reranked[product_limit:])
+            if len(regulatory_reranked) > regulatory_limit:
+                other_results.extend(regulatory_reranked[regulatory_limit:])
+            # Сортируем по релевантности и добираем
+            other_results.sort(key=lambda x: x["rerank_score"], reverse=True)
+            final_context.extend(other_results[:remaining_slots])
+        
+        self.logger.info(f"📚 Retrieved {len(final_context)} context documents "
+                        f"({len([c for c in final_context if c['source_db']=='rag_product'])} продуктовых, "
+                        f"{len([c for c in final_context if c['source_db']=='rag_regulatory'])} регуляторных)")
+        return {
+            "documents": final_context,
+            "query": query
+        }
+    
+    def get_sources(self, context: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Извлекает источники из контекста"""
+        if not context or "documents" not in context:
+            return []
+        
+        return [
+            {
+                "source": doc["metadata"]["source"],
+                "page": doc["metadata"].get("page_number", "N/A"),
+                "source_db": doc["source_db"],
+                "text_preview": doc["text"][:200] + "..." if len(doc["text"]) > 200 else doc["text"]
+            }
+            for doc in context["documents"]
+        ]
+    
+    def generate_answer(self, query: str, context: Optional[Dict[str, Any]] = None) -> str:
+        """Генерирует ответ с использованием RAG"""
+        self.logger.info(f"🧠 Generating RAG answer for: {query[:100]}...")
+        
+        if context is None:
+            context = self.get_context(query)
+        
+        context_docs = context["documents"]
+        
+        if not context_docs:
+            return "❌ Не найдено релевантных документов для ответа на ваш вопрос."
+        
+        # Генерация ответа
+        answer = self.llm.generate_answer(query, context_docs)
+        self.logger.info(f"✅ RAG answer generated: {answer[:100]}...")
+        
+        return answer
+
+***
+
+***
+providers/yandex_provider.py
+***
+# providers/yandex_provider.py
+from .base_provider import BaseProvider
+from clients.yandex_gpt.client import YandexGPTClient
+import logging
+from typing import Dict, Any, Optional, List
+
+class YandexProvider(BaseProvider):
+    """Адаптер для существующего YandexGPT клиента"""
+    
+    def __init__(self, config):
+        self.logger = logging.getLogger(__name__)
+        self.yandex_client = YandexGPTClient(config)
+        self.config = config
+    
+    def get_provider_name(self) -> str:
+        return "yandex"
+    
+    def generate_answer(self, query: str, context: Optional[Dict] = None) -> str:
+        """Генерирует ответ с помощью YandexGPT"""
+        self.logger.info(f"☁️ Generating Yandex answer for: {query[:100]}...")
+        
+        # Создаем фейковый issue для совместимости
+        fake_issue = {
+            "ID": 0,
+            "Заголовок": "AI Query",
+            "description": query,
+            "Статус": "Новая",
+            "Ответственный": "AI Assistant"
+        }
+        
+        answer = self.yandex_client.analyze_issue(fake_issue, [])
+        self.logger.info(f"✅ Yandex answer generated: {answer[:100]}...")
+        
+        return answer
+
+***
+
+***
+generation/__init__.py
+***
+# generation/__init__.py
+
+***
+
+***
+generation/llm_client.py
+***
+# generation/llm_client.py
+import logging
+from typing import List, Dict, Any
+from llama_cpp import Llama
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class LLMClient:
+    def __init__(
+        self,
+        model_path: str = "models/mistral-7b-instruct-v0.2.Q4_K_M.gguf",
+        n_ctx: int = 8192,
+        n_gpu_layers: int = 40,
+        n_threads: int = 8,
+        temperature: float = 0.1,
+        max_tokens: int = 512
+    ):
+        logger.info(f"Загрузка LLM: {model_path}")
+        self.llm = Llama(
+            model_path=model_path,
+            n_ctx=n_ctx,
+            n_gpu_layers=n_gpu_layers,
+            n_threads=n_threads,
+            verbose=False
+        )
+        self.temperature = temperature
+        self.max_tokens = max_tokens
+
+    def generate_answer(self, query: str, context_documents: List[Dict[str, Any]]) -> str:
+        """Генерирует ответ на основе запроса и контекста."""
+        
+        # Формируем контекст из документов
+        context_text = "\n".join([
+            f"Документ {i+1} (источник: {doc['metadata']['source']}):\n{doc['text']}"
+            for i, doc in enumerate(context_documents)
+        ])
+        
+        prompt = f"""Ты — эксперт службы поддержки. 
+ВОПРОС: {query}
+Отвечай ТОЛЬКО на основе предоставленных документов ниже.
+ДОКУМЕНТЫ:
+{context_text}
+ИНСТРУКЦИИ:
+1. Если ответ нельзя вывести из документов — скажи: «В предоставленных материалах нет информации по этому вопросу».
+2. НИКОГДА не придумывай детали.
+3. Ссылайся на источник: укажи название документа (например, «согласно инструкции по виртуальной кассе»).
+4. Отвечай кратко, по делу, на русском языке.
+ОТВЕТ:"""
+        
+        # Логируем длину промпта
+        prompt_tokens = len(self.llm.tokenize(prompt.encode("utf-8")))
+        logger.info(f"Длина промпта: {prompt_tokens} токенов")
+        
+        if prompt_tokens > 7500:  # Оставляем место для ответа
+            logger.warning("⚠️ Промпт близок к лимиту контекста!")
+        
+        response = self.llm(
+            prompt,
+            max_tokens=self.max_tokens,
+            temperature=self.temperature,
+            stop=["\n", "ВОПРОС:", "ИНСТРУКЦИИ:"],
+            echo=False
+        )
+        
+        answer = response["choices"][0]["text"].strip()
+        return answer if answer else "Не удалось сгенерировать ответ."
+
+***
+
+***
+app/main.py
+***
+# app/main.py
+import sys
+import logging
+import argparse
+from pathlib import Path
+from config.config import Config
+from core.assistant_core import AIAssistantCore
+from utils.logger import setup_logger
+
+
+def main():
+    """Основная точка входа приложения"""
+    parser = argparse.ArgumentParser(description="AI Assistant System")
+    parser.add_argument('--mode', choices=['redmine', 'cli', 'all'], default='all',
+                       help="Режим работы: redmine, cli или all (по умолчанию)")
+    parser.add_argument('--log-level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'], default='INFO',
+                       help="Уровень логирования")
+    args = parser.parse_args()
+    
+    # Настраиваем логирование
+    logs_dir = Path(__file__).parent.parent / 'logs'
+    logger = setup_logger(logs_dir / 'main.log', getattr(logging, args.log_level))
+    logger.info("🚀 Starting AI Assistant System")
+    
+    try:
+        # Загрузка конфигурации
+        config = Config()
+        config.validate()
+        logger.info("✅ Configuration validated successfully")
+        
+        # Инициализация ядра
+        core = AIAssistantCore(config)
+        
+        # Запуск в зависимости от режима
+        if args.mode == 'redmine' or args.mode == 'all':
+            logger.info("🔄 Starting Redmine processing...")
+            core.process_redmine_issues()
+        
+        if args.mode == 'cli' or args.mode == 'all':
+            if args.mode == 'all':
+                logger.info("⏳ Switching to CLI mode after Redmine processing...")
+            core.run_cli()
+        
+        logger.info("✅ AI Assistant System completed successfully")
+        
+    except Exception as e:
+        logger.critical(f"🔥 Critical system error: {e}", exc_info=True)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+***
+
+***
+clients/__init__.py
+***
+# clients/__init__.py
+
+***
+
+***
+clients/yandex_gpt/client.py
+***
+# clients/yandex_gpt/client.py
+import requests
+import json
+import logging
+from typing import Dict, Any, List
+
+class YandexGPTClient:
+    """Клиент для работы с YandexGPT API"""
+    
+    def __init__(self, config):
+        self.config = config
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("✅ Initialized YandexGPT client")
+        
+        if not hasattr(config, 'yandex_api_key') or not config.yandex_api_key:
+            self.logger.error("❌ YandexGPT API key not configured")
+    
+    def analyze_issue(self, issue: Dict, sources: List[Dict]) -> str:
+        """Анализирует задачу с помощью YandexGPT"""
+        self.logger.info(f"☁️ Analyzing issue #{issue.get('id', '?')} with YandexGPT...")
+        
+        # Формируем промпт
+        prompt = self._build_prompt(issue, sources)
+        
+        # Делаем запрос к API
+        response = self._make_api_request(prompt)
+        
+        # Обрабатываем ответ
+        answer = self._process_response(response)
+        
+        self.logger.info(f"✅ YandexGPT analysis completed for issue #{issue.get('id', '?')}")
+        return answer
+    
+    def _build_prompt(self, issue: Dict, sources: List[Dict]) -> str:
+        """Формирует промпт для YandexGPT"""
+        description = issue.get('description', '')
+        subject = issue.get('subject', '')
+        
+        prompt = f"""You are an AI assistant that helps with technical support questions about Sommers products.
+        
+Question: {subject}
+Description: {description}
+
+Answer:"""
+        
+        return prompt
+    
+    def _make_api_request(self, prompt: str) -> Dict:
+        """Делает запрос к YandexGPT API"""
+        url = f"https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
+        
+        headers = {
+            'Authorization': f'Api-Key {self.config.yandex_api_key}',
+            'Content-Type': 'application/json'
+        }
+        
+        data = {
+            'modelUri': f'gpt://{self.config.yandex_folder_id}/yandexgpt-lite',
+            'completionOptions': {
+                'stream': False,
+                'temperature': 0.3,
+                'maxTokens': '2000'
+            },
+            'messages': [
+                {
+                    'role': 'user',
+                    'text': prompt
+                }
+            ]
+        }
+        
+        try:
+            response = requests.post(url, headers=headers, json=data)
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            self.logger.error(f"❌ YandexGPT API error: {e}")
+            raise
+    
+    def _process_response(self, response: Dict) -> str:
+        """Обрабатывает ответ от YandexGPT"""
+        try:
+            return response['result']['alternatives'][0]['message']['text'].strip()
+        except Exception as e:
+            self.logger.error(f"❌ Error processing YandexGPT response: {e}")
+            return "❌ Error generating response from YandexGPT"
+
+***
+
+***
+clients/gigachat/client.py
+***
+# clients/gigachat/client.py
+import requests
+import json
+import logging
+from typing import Dict, Any, List
+
+class GigaChatClient:
+    """Клиент для работы с GigaChat API"""
+    
+    def __init__(self, config):
+        self.config = config
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("✅ Initialized GigaChat client")
+        
+        if not hasattr(config, 'gigachat_api_key') or not config.gigachat_api_key:
+            self.logger.error("❌ GigaChat API key not configured")
+    
+    def analyze_issue(self, issue: Dict, sources: List[Dict]) -> str:
+        """Анализирует задачу с помощью GigaChat"""
+        self.logger.info(f"☁️ Analyzing issue #{issue.get('id', '?')} with GigaChat...")
+        
+        # Формируем промпт
+        prompt = self._build_prompt(issue, sources)
+        
+        # Делаем запрос к API
+        response = self._make_api_request(prompt)
+        
+        # Обрабатываем ответ
+        answer = self._process_response(response)
+        
+        self.logger.info(f"✅ GigaChat analysis completed for issue #{issue.get('id', '?')}")
+        return answer
+    
+    def _build_prompt(self, issue: Dict, sources: List[Dict]) -> str:
+        """Формирует промпт для GigaChat"""
+        description = issue.get('description', '')
+        subject = issue.get('subject', '')
+        
+        prompt = f"""You are an AI assistant that helps with technical support questions about Sommers products.
+        
+Question: {subject}
+Description: {description}
+
+Answer:"""
+        
+        return prompt
+    
+    def _make_api_request(self, prompt: str) -> Dict:
+        """Делает запрос к GigaChat API"""
+        # Получаем access token
+        auth_url = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
+        auth_headers = {
+            'Authorization': f'Basic {self.config.gigachat_credentials}',
+            'RqUID': 'unique-request-id',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        auth_data = {'scope': 'GIGACHAT_API_PUB'}
+        
+        try:
+            auth_response = requests.post(auth_url, headers=auth_headers, data=auth_data, verify=False)
+            auth_response.raise_for_status()
+            access_token = auth_response.json()['access_token']
+        except Exception as e:
+            self.logger.error(f"❌ GigaChat auth error: {e}")
+            raise
+        
+        # Делаем запрос к модели
+        url = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions"
+        headers = {
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        }
+        data = {
+            'model': 'GigaChat',
+            'messages': [{'role': 'user', 'content': prompt}],
+            'temperature': 0.3,
+            'max_tokens': 2000
+        }
+        
+        try:
+            response = requests.post(url, headers=headers, json=data, verify=False)
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            self.logger.error(f"❌ GigaChat API error: {e}")
+            raise
+    
+    def _process_response(self, response: Dict) -> str:
+        """Обрабатывает ответ от GigaChat"""
+        try:
+            return response['choices'][0]['message']['content'].strip()
+        except Exception as e:
+            self.logger.error(f"❌ Error processing GigaChat response: {e}")
+            return "❌ Error generating response from GigaChat"
+
+***
+
+***
+clients/telegram/notifier.py
+***
+# clients/telegram/notifier.py
+import requests
+import json
+import logging
+from typing import Dict, Any
+
+class TelegramNotifier:
+    """Уведомления через Telegram бота"""
+    
+    def __init__(self, bot_token: str, chat_id: str, mapping_file: str):
+        self.bot_token = bot_token
+        self.chat_id = chat_id
+        self.mapping_file = mapping_file
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("✅ Initialized Telegram notifier")
+        
+        # Загружаем маппинг пользователей
+        self.user_mapping = self._load_user_mapping()
+    
+    def _load_user_mapping(self) -> Dict:
+        """Загружает маппинг пользователей из файла"""
+        try:
+            with open(self.mapping_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            self.logger.warning(f"⚠️ Failed to load user mapping: {e}")
+            return {}
+    
+    def _send_message(self, text: str) -> bool:
+        """Отправляет сообщение в Telegram"""
+        url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
+        
+        data = {
+            'chat_id': self.chat_id,
+            'text': text,
+            'parse_mode': 'HTML'
+        }
+        
+        try:
+            response = requests.post(url, json=data)
+            response.raise_for_status()
+            return True
+        except Exception as e:
+            self.logger.error(f"❌ Telegram API error: {e}")
+            return False
+    
+    def send_success_notification(self, issue: Dict, redmine_url: str) -> bool:
+        """Отправляет уведомление об успешной обработке задачи"""
+        issue_id = issue.get('id', '?')
+        subject = issue.get('subject', 'No subject')
+        author_name = issue.get('author', {}).get('name', 'Unknown')
+        
+        message = f"✅ <b>Задача обработана!</b>\n\n"\
+                 f"📋 ID: {issue_id}\n"\
+                 f"🎯 Тема: {subject}\n"\
+                 f"👤 Автор: {author_name}\n"\
+                 f"🔗 Ссылка: {redmine_url}/issues/{issue_id}"
+        
+        return self._send_message(message)
+    
+    def send_error_notification(self, issue: Dict, error: str, redmine_url: str) -> bool:
+        """Отправляет уведомление об ошибке"""
+        issue_id = issue.get('id', '?') if isinstance(issue, dict) else '?'
+        subject = issue.get('subject', 'Unknown') if isinstance(issue, dict) else 'Unknown'
+        
+        message = f"❌ <b>Ошибка обработки задачи!</b>\n\n"\
+                 f"📋 ID: {issue_id}\n"\
+                 f"🎯 Тема: {subject}\n"\
+                 f"🚨 Ошибка: {error}\n"\
+                 f"🔗 Ссылка: {redmine_url}/issues/{issue_id}"
+        
+        return self._send_message(message)
+    
+    def send_system_notification(self, message: str) -> bool:
+        """Отправляет системное уведомление"""
+        return self._send_message(message)
+
+***
+
+***
+clients/redmine/client.py
+***
+# clients/redmine/client.py
+import urllib3
+from typing import Dict, List, Any, Optional
+from redminelib import Redmine
+from redminelib.exceptions import ResourceAttrError, AuthError, ServerError
+import logging
+from retry import retry
+from datetime import datetime
+import re
+
+# Отключаем предупреждения SSL
+urllib3.disable_warnings()
+
+def _remove_emojis(text: str) -> str:
+    """Удаляет эмодзи и другие не-BMP символы, которые могут вызывать ошибки в Redmine"""
+    emoji_pattern = re.compile(
+        "["
+        "\U0001F600-\U0001F64F"  # emoticons
+        "\U0001F300-\U0001F5FF"  # symbols & pictographs
+        "\U0001F680-\U0001F6FF"  # transport & map symbols
+        "\U0001F1E0-\U0001F1FF"  # flags
+        "\U00002700-\U000027BF"  # dingbats
+        "]+",
+        flags=re.UNICODE
+    )
+    return emoji_pattern.sub(r'', text)
+
+class RedmineClient:
+    """Клиент для работы с Redmine API (рабочая версия с redminelib)"""
+    
+    def __init__(self, redmine_url: str, api_key: str):
+        self.redmine_url = redmine_url
+        self.api_key = api_key
+        self._redmine = None
+        self.logger = logging.getLogger(__name__)
+        self.logger.info(f"✅ Initialized Redmine client for {redmine_url}")
+    
+    @property
+    def redmine(self):
+        """Ленивая инициализация Redmine клиента"""
+        if self._redmine is None:
+            self._redmine = Redmine(
+                self.redmine_url,
+                key=self.api_key,
+                requests={'verify': False}  # Критически важно для SSL
+            )
+        return self._redmine
+    
+    @retry(tries=3, delay=2, backoff=2, logger=logging)
+    def find_target_issues(self, target_status_id: str) -> List[Dict]:
+        """Находит задачи с целевым статусом"""
+        self.logger.info(f"🔍 Searching for issues with status ID: {target_status_id}")
+        try:
+            # Используем filter вместо напрямую GET запроса
+            issues = self.redmine.issue.filter(
+                status_id=target_status_id,
+                limit=100
+            )
+            result = []
+            for issue in issues:
+                result.append(self._format_issue(issue))
+            self.logger.info(f"✅ Found {len(result)} issues with status ID {target_status_id}")
+            return result
+        except (AuthError, ServerError) as e:
+            self.logger.error(f"❌ Redmine API error: {str(e)}")
+            raise
+        except Exception as e:
+            self.logger.error(f"❌ Unexpected error searching issues: {str(e)}", exc_info=True)
+            return []
+    
+    def get_issue_details(self, issue_id: int) -> Dict:
+        """Получает детали задачи"""
+        try:
+            issue = self.redmine.issue.get(issue_id, include='attachments')
+            return self._format_issue(issue)
+        except Exception as e:
+            self.logger.error(f"❌ Error getting issue details for #{issue_id}: {str(e)}")
+            return {}
+    
+    def get_issue_display_info(self, issue: Dict) -> str:
+        """Возвращает строку с информацией о задаче для логирования"""
+        return f"#{issue.get('id', '?')} '{issue.get('subject', 'No subject')}' by {issue.get('author_name', 'Unknown')}"
+    
+    @retry(tries=3, delay=1, backoff=2, logger=logging)
+    def add_analysis_comment(self, issue_id: int, analysis_text: str, documents_count: int = 0) -> bool:
+        """Добавляет приватный комментарий с анализом к задаче"""
+        comment = self._format_comment(analysis_text, documents_count)
+        return self.add_private_comment(issue_id, comment)
+    
+    @retry(tries=3, delay=1, backoff=2, logger=logging)
+    def add_private_comment(self, issue_id: int, comment: str) -> bool:
+        """Добавляет приватный комментарий к задаче (рабочая версия)"""
+        try:
+            self.logger.info(f"💭 Adding private comment to issue #{issue_id}")
+            
+            # КРИТИЧЕСКИ ВАЖНО: сначала получаем объект задачи
+            issue = self.redmine.issue.get(issue_id)
+            
+            # Обновляем только нужные поля
+            issue.notes = comment
+            issue.private_notes = True  # Делаем комментарий приватным
+            
+            # Сохраняем изменения - redminelib сам формирует правильный запрос
+            issue.save()
+            
+            self.logger.info(f"✅ Private comment successfully added to issue #{issue_id}")
+            return True
+        except Exception as e:
+            self.logger.error(f"❌ Error adding comment to issue #{issue_id}: {str(e)}")
+            return False
+    
+    def _format_issue(self, issue) -> Dict:
+        """Форматирует задачу в словарь"""
+        try:
+            return {
+                "id": issue.id,
+                "subject": self._safe_get_attr(issue, 'subject', "No title"),
+                "description": self._safe_get_attr(issue, 'description', ""),
+                "status": {
+                    "id": self._safe_get_attr(issue.status, 'id', 0),
+                    "name": self._safe_get_attr(issue.status, 'name', "Unknown")
+                },
+                "author": {
+                    "id": self._safe_get_attr(issue.author, 'id', 0),
+                    "name": self._safe_get_attr(issue.author, 'name', "Unknown")
+                },
+                "author_name": self._safe_get_attr(issue.author, 'name', "Unknown"),
+                "assigned_to": {
+                    "id": self._safe_get_attr(issue.assigned_to, 'id', 0) if hasattr(issue, 'assigned_to') else 0,
+                    "name": self._safe_get_attr(issue.assigned_to, 'name', "Not assigned") if hasattr(issue, 'assigned_to') else "Not assigned"
+                },
+                "project": {
+                    "id": self._safe_get_attr(issue.project, 'id', 0),
+                    "name": self._safe_get_attr(issue.project, 'name', "No project")
+                }
+            }
+        except Exception as e:
+            self.logger.error(f"❌ Error formatting issue {issue.id}: {str(e)}")
+            raise
+    
+    def _format_comment(self, analysis: str, docs_count: int) -> str:
+        """Форматирует комментарий для Redmine без эмодзи"""
+        # Удаляем эмодзи из анализа (на всякий случай)
+        clean_analysis = _remove_emojis(analysis)
+        
+        return (
+            "AI Analysis (RAG):\n"
+            "-----------------\n"
+            f"{clean_analysis}\n\n"
+            f"Documents used: {docs_count}\n"
+            "-----------------\n"
+            f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+    
+    def _safe_get_attr(self, obj, attr, default=""):
+        """Безопасное получение атрибута объекта"""
+        try:
+            if hasattr(obj, attr):
+                return getattr(obj, attr, default)
+            return default
+        except ResourceAttrError:
+            return default
+        except Exception:
+            return default
+***
+
+***
+core/__init__.py
+***
+# core/__init__.py
+
+***
+
+***
+core/assistant_core.py
+***
+# core/assistant_core.py
+import logging
+import time
+from providers.provider_factory import ProviderFactory
+from storage.postgres_storage import PostgreSQLStorage
+from channels.redmine_channel import RedmineChannel
+from channels.cli_channel import CLIChannel
+from clients.telegram.notifier import TelegramNotifier
+
+class AIAssistantCore:
+    """Ядро системы AI Assistant"""
+    
+    def __init__(self, config):
+        self.config = config
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("🚀 Initializing AI Assistant Core...")
+        
+        # Инициализация хранилища
+        self.storage = PostgreSQLStorage(config)
+        
+        # Инициализация провайдеров
+        self.provider_factory = ProviderFactory(config)
+        
+        # Инициализация каналов
+        self.channels = {}
+        self._init_channels()
+        
+        # Инициализация Telegram уведомлений
+        self.telegram_notifier = self._init_telegram_notifier()
+        
+        self.logger.info("✅ AI Assistant Core initialized successfully")
+    
+    def _init_channels(self):
+        """Инициализация всех каналов"""
+        self.logger.info("🔧 Initializing channels...")
+        
+        # Redmine channel
+        try:
+            self.channels['redmine'] = RedmineChannel(self.config, self)
+            self.logger.info("✅ Redmine channel initialized")
+        except Exception as e:
+            self.logger.error(f"❌ Failed to initialize Redmine channel: {e}")
+        
+        # CLI channel
+        try:
+            self.channels['cli'] = CLIChannel(self)
+            self.logger.info("✅ CLI channel initialized")
+        except Exception as e:
+            self.logger.error(f"❌ Failed to initialize CLI channel: {e}")
+    
+    def _init_telegram_notifier(self):
+        """Инициализация Telegram уведомлений"""
+        if not (self.config.telegram_bot_token and self.config.telegram_chat_id):
+            self.logger.warning("⚠️ Telegram notifier not configured - missing bot token or chat ID")
+            return None
+        
+        try:
+            notifier = TelegramNotifier(
+                self.config.telegram_bot_token,
+                self.config.telegram_chat_id,
+                self.config.telegram_mapping_file
+            )
+            self.logger.info("✅ Telegram notifier initialized")
+            return notifier
+        except Exception as e:
+            self.logger.error(f"❌ Failed to initialize Telegram notifier: {e}")
+            return None
+    
+    def process_redmine_issues(self):
+        """Обработка задач из Redmine"""
+        if 'redmine' not in self.channels:
+            self.logger.error("❌ Redmine channel not available")
+            return
+        
+        self.logger.info("🔄 Starting Redmine issue processing cycle...")
+        start_time = time.time()
+        
+        try:
+            self.channels['redmine'].process_issues()
+            elapsed = time.time() - start_time
+            self.logger.info(f"✅ Redmine processing completed in {elapsed:.2f} seconds")
+        except Exception as e:
+            self.logger.error(f"❌ Critical error in Redmine processing: {e}", exc_info=True)
+            if self.telegram_notifier:
+                self.telegram_notifier.send_error_notification(
+                    {"Заголовок": "Critical System Error"},
+                    f"Redmine processing failed: {str(e)}",
+                    self.config.redmine_url
+                )
+    
+    def run_cli(self):
+        """Запуск CLI интерфейса"""
+        if 'cli' not in self.channels:
+            self.logger.error("❌ CLI channel not available")
+            return
+        
+        self.channels['cli'].run_interactive()
+    
+    def get_available_providers(self) -> list:
+        """Получение списка доступных провайдеров"""
+        return list(self.provider_factory.providers.keys())
+    
+    def get_available_channels(self) -> list:
+        """Получение списка доступных каналов"""
+        return list(self.channels.keys())
+
+
+***
+
+***
+retrieval/__init__.py
+***
+# retrieval/__init__.py
+
+***
+
+***
+retrieval/reranker.py
+***
+# retrieval/reranker.py
+import logging
+from typing import List, Dict, Any
+from sentence_transformers import CrossEncoder
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class Reranker:
+    def __init__(self, model_name: str = "BAAI/bge-reranker-v2-m3", cache_folder: str = "models"):
+        logger.info(f"Загрузка реранкера: {model_name}")
+        self.model = CrossEncoder(
+            model_name,
+            cache_folder=cache_folder,
+            max_length=512
+        )
+
+    def rerank(self, query: str, documents: List[Dict[str, Any]], top_k: int = 5) -> List[Dict[str, Any]]:
+        if not documents:
+            return []
+        
+        logger.info(f"Реранкинг {len(documents)} документов для запроса: {query}")
+        pairs = [(query, doc["text"]) for doc in documents]
+        # Уменьшаем batch_size для экономии VRAM
+        scores = self.model.predict(pairs, batch_size=8)
+        
+        for doc, score in zip(documents, scores):
+            doc["rerank_score"] = float(score)
+        
+        reranked = sorted(documents, key=lambda x: x["rerank_score"], reverse=True)
+        logger.info(f"Лучший score после реранкинга: {reranked[0]['rerank_score']:.4f}")
+        return reranked[:top_k]
+
+***
+
+***
+retrieval/vector_store.py
+***
+# retrieval/vector_store.py
+import logging
+from typing import List, Dict, Any
+from qdrant_client import QdrantClient
+from qdrant_client.models import VectorParams, Distance, PointStruct
+from sentence_transformers import SentenceTransformer
+import hashlib
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class QdrantVectorStore:
+    def __init__(
+        self,
+        collection_name: str = "rag_product",  # "rag_product" или "rag_regulatory"
+        embedding_model_name: str = "BAAI/bge-m3",
+        host: str = "localhost",
+        port: int = 6333,
+        cache_folder: str = "models"
+    ):
+        self.collection_name = collection_name
+        self.client = QdrantClient(host=host, port=port)
+        logger.info(f"Загрузка модели эмбеддингов: {embedding_model_name} для коллекции {collection_name}")
+        self.embedding_model = SentenceTransformer(
+            embedding_model_name,
+            cache_folder=cache_folder,
+            device="cuda"
+        )
+        self._create_collection()
+
+    def _create_collection(self):
+        if not self.client.collection_exists(self.collection_name):
+            self.client.create_collection(
+                collection_name=self.collection_name,
+                vectors_config=VectorParams(size=1024, distance=Distance.COSINE)
+            )
+            logger.info(f"Коллекция создана: {self.collection_name}")
+        else:
+            logger.info(f"Коллекция уже существует: {self.collection_name}")
+
+    def embed_texts(self, texts: List[str]) -> List[List[float]]:
+        logger.info(f"Генерация эмбеддингов для {len(texts)} текстов в {self.collection_name}...")
+        embeddings = self.embedding_model.encode(
+            texts,
+            batch_size=32,
+            show_progress_bar=False,
+            convert_to_numpy=True,
+            normalize_embeddings=True
+        )
+        return embeddings.tolist()
+
+    def add_documents(self, documents: List[Dict[str, Any]], replace: bool = True, batch_size: int = 100):
+        if not documents:
+            logger.warning("Нет документов для добавления")
+            return
+        
+        if replace:
+            if self.client.collection_exists(self.collection_name):
+                logger.info(f"Удаление старой коллекции: {self.collection_name}")
+                self.client.delete_collection(self.collection_name)
+            self._create_collection()
+
+        texts = [doc["text"] for doc in documents]
+        embeddings = self.embed_texts(texts)
+        
+        points = []
+        for doc, embedding in zip(documents, embeddings):
+            doc_id = hashlib.md5(f"{doc['text']}{doc['metadata']['source']}".encode()).hexdigest()
+            points.append(
+                PointStruct(
+                    id=doc_id,
+                    vector=embedding,
+                    payload={
+                        "text": doc["text"],
+                        "metadata": {**doc["metadata"], "source_db": self.collection_name}
+                    }
+                )
+            )
+
+        total = len(points)
+        logger.info(f"Добавление {total} точек в {self.collection_name} пакетами по {batch_size}...")
+        for i in range(0, total, batch_size):
+            batch = points[i:i + batch_size]
+            self.client.upsert(collection_name=self.collection_name, points=batch)
+            logger.info(f"  [{self.collection_name}] Отправлено: {min(i + batch_size, total)}/{total}")
+        
+        logger.info(f"✅ Документы успешно добавлены в {self.collection_name}")
+
+    def search(self, query: str, top_k: int = 20) -> List[Dict[str, Any]]:
+        if not isinstance(query, str) or not query.strip():
+            logger.warning("Получен пустой или некорректный запрос")
+            return []
+        
+        clean_query = query.strip()
+        try:
+            query_embedding = self.embedding_model.encode(
+                [clean_query],
+                convert_to_numpy=True,
+                normalize_embeddings=True
+            )[0].tolist()
+        except Exception as e:
+            logger.error(f"Ошибка при генерации эмбеддинга для '{clean_query}': {e}")
+            return []
+
+        results = self.client.query_points(
+            collection_name=self.collection_name,
+            query=query_embedding,
+            limit=top_k
+        )
+        
+        return [{
+            "text": hit.payload["text"],
+            "metadata": hit.payload["metadata"],
+            "score": hit.score,
+            "source_db": self.collection_name
+        } for hit in results.points]
+
+***
+
+***
+utils/logger.py
+***
+# utils/logger.py
+import logging
+import sys
+from pathlib import Path
+
+def setup_logger(log_file: Path = None, log_level: int = logging.INFO):
+    """Настраивает логгер для приложения"""
+    
+    # Формат сообщений
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    
+    # Консольный обработчик
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+    console_handler.setLevel(log_level)
+    
+    # Файловый обработчик (если указан файл)
+    handlers = [console_handler]
+    if log_file:
+        log_file.parent.mkdir(exist_ok=True, parents=True)
+        file_handler = logging.FileHandler(log_file, encoding='utf-8')
+        file_handler.setFormatter(formatter)
+        file_handler.setLevel(log_level)
+        handlers.append(file_handler)
+    
+    # Настраиваем корневой логгер
+    logging.basicConfig(
+        level=log_level,
+        handlers=handlers,
+        force=True
+    )
+    
+    # Уменьшаем уровень логирования для сторонних библиотек
+    logging.getLogger('qdrant_client').setLevel(logging.WARNING)
+    logging.getLogger('sentence_transformers').setLevel(logging.WARNING)
+    logging.getLogger('urllib3').setLevel(logging.WARNING)
+    
+    return logging.getLogger('ai_assistant')
+
+***
+
+***
+channels/__init__.py
+***
+# channels/__init__.py
+
+***
+
+***
+channels/base_channel.py
+***
+# channels/base_channel.py
+from abc import ABC, abstractmethod
+from typing import Dict, Any
+
+class BaseChannel(ABC):
+    """Базовый интерфейс для всех каналов взаимодействия"""
+    
+    @abstractmethod
+    def get_input(self) -> Dict[str, Any]:
+        """Получает входные данные от канала"""
+        pass
+    
+    @abstractmethod
+    def send_output(self, response: str, meta: Dict[str, Any] = None):
+        """Отправляет ответ через канал"""
+        pass
+    
+    @abstractmethod
+    def get_channel_name(self) -> str:
+        """Возвращает имя канала для логирования и маршрутизации"""
+        pass
+
+
+***
+
+***
+channels/cli_channel.py
+***
+# channels/cli_channel.py
+from .base_channel import BaseChannel
+import logging
+import sys
+from typing import Dict, Any, List, Optional
+
+class CLIChannel(BaseChannel):
+    """Канал для командной строки"""
+    
+    def __init__(self, core):
+        self.core = core
+        self.logger = logging.getLogger(__name__)
+    
+    def get_channel_name(self) -> str:
+        return "cli"
+    
+    def run_interactive(self):
+        """Запускает интерактивный режим CLI"""
+        print("\n🚀 AI Assistant CLI - Type 'quit' to exit")
+        print("Available providers: " + ", ".join(self.core.get_available_providers()))
+        print("Available channels: " + ", ".join(self.core.get_available_channels()))
+        print("-" * 60)
+        
+        while True:
+            try:
+                query = input("\n❓ Your question: ").strip()
+                if query.lower() in ['quit', 'exit', 'выход']:
+                    print("👋 Goodbye!")
+                    break
+                
+                if not query:
+                    continue
+                
+                # Выбор провайдера (по умолчанию - RAG)
+                available_providers = self.core.get_available_providers()
+                default_provider = "rag" if "rag" in available_providers else available_providers[0]
+                provider_name = input(f"🔧 Provider ({', '.join(available_providers)}) [{default_provider}]: ").strip().lower() or default_provider
+                
+                try:
+                    provider = self.core.provider_factory.get_provider(provider_name)
+                except ValueError as e:
+                    print(f"❌ {e}")
+                    continue
+                
+                # Получение контекста для RAG
+                context = None
+                if provider_name == "rag":
+                    print("🔍 Searching for relevant documents...")
+                    context = provider.get_context(query)
+                    print(f"📚 Found {len(context['documents'])} relevant documents")
+                
+                # Генерация ответа
+                print("🧠 Generating answer...")
+                answer = provider.generate_answer(query, context)
+                
+                # Показать ответ
+                print(f"\n💡 Answer ({provider_name.upper()}):\n" + "-" * 60)
+                print(answer)
+                print("-" * 60)
+                
+                # Показать источники для RAG
+                if provider_name == "rag" and context:
+                    sources = provider.get_sources(context)
+                    if sources:
+                        print("\n📚 Sources:")
+                        for i, source in enumerate(sources, 1):
+                            print(f"{i}. {source['source']} (page {source['page']})")
+                            print(f"   Preview: {source['text_preview']}")
+                
+                # Сохранить в историю
+                sources_data = provider.get_sources(context) if provider_name == "rag" and context else []
+                self.core.storage.save_query(
+                    channel="cli",
+                    provider=provider_name,
+                    query=query,
+                    answer=answer,
+                    context=context,
+                    sources=sources_data
+                )
+                
+            except KeyboardInterrupt:
+                print("\n🛑 Operation cancelled")
+                break
+            except Exception as e:
+                logging.error(f"❌ Error: {e}", exc_info=True)
+                print(f"❌ Error: {e}")
+    
+    def get_input(self) -> Dict[str, Any]:
+        return {}
+    
+    def send_output(self, response: str, meta: Dict[str, Any] = None):
+        print(response)
+
+***
+
+***
+channels/redmine_channel.py
+***
+# channels/redmine_channel.py
+from .base_channel import BaseChannel
+from clients.redmine.client import RedmineClient
+import logging
+from typing import Dict, List, Any, Optional
+
+class RedmineChannel(BaseChannel):
+    """Адаптер для существующего Redmine клиента"""
+    
+    def __init__(self, config, core):
+        self.config = config
+        self.core = core
+        self.redmine_client = RedmineClient(config.redmine_url, config.redmine_api_key)
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("🔧 Initializing Redmine Channel...")
+    
+    def get_channel_name(self) -> str:
+        return "redmine"
+    
+    def process_issues(self):
+        """Основной метод обработки задач из Redmine"""
+        self.logger.info("🔄 Starting Redmine issue processing...")
+        
+        try:
+            issues = self.redmine_client.find_target_issues(self.config.target_status)
+            
+            if not issues:
+                self.logger.info("📭 No issues found in target status")
+                return
+            
+            self.logger.info(f"📋 Found {len(issues)} issues to process")
+            
+            for issue in issues:
+                self._process_single_issue(issue)
+                
+        except Exception as e:
+            self.logger.error(f"❌ Error processing Redmine issues: {e}", exc_info=True)
+            # Используем существующую систему уведомлений
+            if self.core.telegram_notifier:
+                self.core.telegram_notifier.send_error_notification(
+                    {"Заголовок": "Redmine Processing Error"}, 
+                    str(e), 
+                    self.config.redmine_url
+                )
+    
+    def _process_single_issue(self, issue: Dict[str, Any]):
+        """Обрабатывает одну задачу из Redmine"""
+        issue_info = self.redmine_client.get_issue_display_info(issue)
+        self.logger.info(f"⚙️ Processing issue: {issue_info}")
+        
+        try:
+            # Формируем запрос из описания задачи
+            query = issue.get('description', '').strip()
+            if not query:
+                query = issue.get('subject', '')
+            
+            if not query:
+                self.logger.warning(f"⚠️ Issue #{issue['id']} has no description or title")
+                return
+            
+            # Получаем провайдера по умолчанию для Redmine
+            provider = self.core.provider_factory.get_default_provider('redmine')
+            
+            # Получаем контекст (только для RAG провайдера)
+            context = provider.get_context(query) if hasattr(provider, 'get_context') else None
+            
+            # Генерируем ответ
+            answer = provider.generate_answer(query, context)
+            
+            # Получаем источники (только для RAG)
+            sources = provider.get_sources(context) if hasattr(provider, 'get_sources') and context else []
+            
+            # Сохраняем в историю
+            query_id = self.core.storage.save_query(
+                channel="redmine",
+                provider=provider.get_provider_name(),
+                query=query,
+                answer=answer,
+                context=context,
+                sources=sources,
+                issue_id=issue['id'],
+                project_name=issue.get('project', {}).get('name', '')
+            )
+            
+            # Формируем комментарий с источниками для RAG
+            full_comment = self._format_comment(answer, sources, provider.get_provider_name())
+            
+            # Добавляем комментарий в Redmine
+            if self.redmine_client.add_analysis_comment(issue['id'], full_comment, len(sources or [])):
+                self.logger.info(f"✅ Analysis comment added to issue #{issue['id']}")
+                
+                # Отправляем уведомление в Telegram (используем существующую логику)
+                if self.core.telegram_notifier:
+                    self.core.telegram_notifier.send_success_notification(issue, self.config.redmine_url)
+            else:
+                self.logger.error(f"❌ Failed to add comment to issue #{issue['id']}")
+                
+        except Exception as e:
+            self.logger.error(f"❌ Error processing issue #{issue['id']}: {e}", exc_info=True)
+            if self.core.telegram_notifier:
+                self.core.telegram_notifier.send_error_notification(issue, str(e), self.config.redmine_url)
+    
+    def _format_comment(self, answer: str, sources: List[Dict[str, Any]], provider_name: str) -> str:
+        """Форматирует комментарий для Redmine в зависимости от провайдера"""
+        comment = f"AI Analysis ({provider_name.upper()}):\n"
+        comment += "-----------------\n"
+        comment += f"{answer}\n\n"
+        
+        if sources:
+            comment += "📚 Источники:\n"
+            for i, source in enumerate(sources, 1):
+                comment += f"{i}. {source['source']} (стр. {source['page']})"
+                if source.get('source_db') == 'rag_product':
+                    comment += " - Продуктовая документация\n"
+                elif source.get('source_db') == 'rag_regulatory':
+                    comment += " - Регуляторные документы\n"
+                else:
+                    comment += "\n"
+        
+        return comment
+    
+    def get_input(self) -> Dict[str, Any]:
+        """Не используется для Redmine в текущей архитектуре"""
+        return {}
+    
+    def send_output(self, response: str, meta: Dict[str, Any] = None):
+        """Не используется для Redmine в текущей архитектуре"""
+        pass
+
+***
+
+***
+scripts/setup_db.py
+***
+#!/usr/bin/env python3
+import psycopg2
+import logging
+import os
+from pathlib import Path
+
+def setup_database():
+    """Настраивает базу данных и создает необходимые таблицы"""
+    # Настройка логирования
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    
+    try:
+        logger.info("🚀 Setting up PostgreSQL database...")
+        
+        # Параметры подключения из окружения
+        pg_host = os.getenv('PG_HOST', 'localhost')
+        pg_port = os.getenv('PG_PORT', '5432')
+        pg_db = os.getenv('PG_DB', 'ai_assistant')
+        pg_user = os.getenv('PG_USER', 'ai_assistant_user')
+        pg_password = os.getenv('PG_PASSWORD', 'secure_ai_password_456')
+        
+        # Подключаемся к существующей базе
+        conn = psycopg2.connect(
+            host=pg_host,
+            port=pg_port,
+            database=pg_db,
+            user=pg_user,
+            password=pg_password
+        )
+        conn.autocommit = True
+        
+        with conn.cursor() as cur:
+            logger.info("🔧 Creating tables...")
+            
+            # Создаем расширение pgvector
+            try:
+                cur.execute("CREATE EXTENSION IF NOT EXISTS vector")
+                logger.info("✅ pgvector extension created/enabled")
+            except Exception as e:
+                logger.warning(f"⚠️ Could not create pgvector extension: {e}")
+            
+            # Создаем таблицу истории запросов
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS query_history (
+                id SERIAL PRIMARY KEY,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                channel VARCHAR(50) NOT NULL,
+                provider VARCHAR(50) NOT NULL,
+                query TEXT NOT NULL,
+                context JSONB,
+                answer TEXT NOT NULL,
+                sources JSONB,
+                execution_time FLOAT,
+                issue_id INTEGER,
+                project_name VARCHAR(255),
+                user_id VARCHAR(100),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            
+            # Создаем таблицу обратной связи
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS response_feedback (
+                id SERIAL PRIMARY KEY,
+                query_id INTEGER REFERENCES query_history(id) ON DELETE CASCADE,
+                rating INTEGER CHECK (rating BETWEEN 1 AND 5),
+                feedback_text TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            
+            # Создаем индексы
+            cur.execute("""
+            CREATE INDEX IF NOT EXISTS idx_query_history_channel 
+            ON query_history(channel, timestamp DESC)
+            """)
+            
+            cur.execute("""
+            CREATE INDEX IF NOT EXISTS idx_query_history_provider 
+            ON query_history(provider, timestamp DESC)
+            """)
+            
+            cur.execute("""
+            CREATE INDEX IF NOT EXISTS idx_query_history_timestamp 
+            ON query_history(timestamp DESC)
+            """)
+            
+            logger.info("✅ Database setup completed successfully")
+        
+        conn.close()
+        
+    except Exception as e:
+        logger.error(f"❌ Database setup failed: {e}")
+        raise
+
+if __name__ == "__main__":
+    setup_database()
+
+***
+
+***
+storage/__init__.py
+***
+# storage/__init__.py
+
+***
+
+***
+storage/postgres_storage.py
+***
+# storage/postgres_storage.py
+import psycopg2
+from psycopg2 import sql
+from typing import Dict, List, Any, Optional, Union
+import json
+import logging
+from datetime import datetime
+
+class PostgreSQLStorage:
+    """Хранилище для истории запросов/ответов в PostgreSQL с pgvector"""
+    
+    def __init__(self, config):
+        self.logger = logging.getLogger(__name__)
+        self.config = config
+        self.conn = None
+        self._connect()
+        self._create_tables()
+        self.logger.info("✅ PostgreSQL storage initialized successfully")
+    
+    def _connect(self):
+        """Устанавливает соединение с PostgreSQL"""
+        try:
+            self.conn = psycopg2.connect(
+                host=self.config.pg_host,
+                port=self.config.pg_port,
+                database=self.config.pg_db,
+                user=self.config.pg_user,
+                password=self.config.pg_password
+            )
+            self.logger.info("✅ Connected to PostgreSQL database")
+        except Exception as e:
+            self.logger.error(f"❌ Failed to connect to PostgreSQL: {e}")
+            raise
+    
+    def _create_tables(self):
+        """Создает необходимые таблицы в базе данных"""
+        with self.conn.cursor() as cur:
+            # Основная таблица истории запросов
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS query_history (
+                id SERIAL PRIMARY KEY,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                channel VARCHAR(50) NOT NULL,
+                provider VARCHAR(50) NOT NULL,
+                query TEXT NOT NULL,
+                context JSONB,
+                answer TEXT NOT NULL,
+                sources JSONB,
+                execution_time FLOAT,
+                issue_id INTEGER,
+                project_name VARCHAR(255),
+                user_id VARCHAR(100),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            
+            # Таблица для аналитики качества ответов
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS response_feedback (
+                id SERIAL PRIMARY KEY,
+                query_id INTEGER REFERENCES query_history(id) ON DELETE CASCADE,
+                rating INTEGER CHECK (rating BETWEEN 1 AND 5),
+                feedback_text TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            
+            # Индексы для быстрого поиска
+            cur.execute("""
+            CREATE INDEX IF NOT EXISTS idx_query_history_channel 
+            ON query_history(channel, timestamp DESC)
+            """)
+            
+            cur.execute("""
+            CREATE INDEX IF NOT EXISTS idx_query_history_provider 
+            ON query_history(provider, timestamp DESC)
+            """)
+            
+            cur.execute("""
+            CREATE INDEX IF NOT EXISTS idx_query_history_timestamp 
+            ON query_history(timestamp DESC)
+            """)
+            
+            self.conn.commit()
+    
+    def save_query(self, channel: str, provider: str, query: str, 
+                  answer: str, context: Optional[Dict] = None, sources: Optional[List[Dict]] = None,
+                  execution_time: Optional[float] = None, issue_id: Optional[int] = None,
+                  project_name: Optional[str] = None, user_id: Optional[str] = None) -> int:
+        """Сохраняет запрос и ответ в базу"""
+        with self.conn.cursor() as cur:
+            cur.execute("""
+            INSERT INTO query_history 
+            (channel, provider, query, context, answer, sources, execution_time, issue_id, project_name, user_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+            """, (
+                channel,
+                provider,
+                query,
+                json.dumps(context) if context else None,
+                answer,
+                json.dumps(sources) if sources else None,
+                execution_time,
+                issue_id,
+                project_name,
+                user_id
+            ))
+            query_id = cur.fetchone()[0]
+            self.conn.commit()
+            return query_id
+    
+    def get_query_history(self, limit: int = 100, channel: Optional[str] = None, 
+                         provider: Optional[str] = None, days: int = 7) -> List[Dict]:
+        """Получает историю запросов за последние N дней"""
+        with self.conn.cursor() as cur:
+            query = """
+            SELECT id, timestamp, channel, provider, query, answer, sources, issue_id, project_name
+            FROM query_history
+            WHERE timestamp >= NOW() - INTERVAL '%s days'
+            """
+            params = [days]
+            
+            if channel:
+                query += " AND channel = %s"
+                params.append(channel)
+            
+            if provider:
+                query += " AND provider = %s"
+                params.append(provider)
+            
+            query += " ORDER BY timestamp DESC LIMIT %s"
+            params.append(limit)
+            
+            cur.execute(query, tuple(params))
+            rows = cur.fetchall()
+            
+            return [
+                {
+                    "id": row[0],
+                    "timestamp": row[1],
+                    "channel": row[2],
+                    "provider": row[3],
+                    "query": row[4],
+                    "answer": row[5],
+                    "sources": json.loads(row[6]) if row[6] else None,
+                    "issue_id": row[7],
+                    "project_name": row[8]
+                }
+                for row in rows
+            ]
+    
+    def add_feedback(self, query_id: int, rating: int, feedback_text: Optional[str] = None) -> bool:
+        """Добавляет обратную связь по ответу"""
+        with self.conn.cursor() as cur:
+            cur.execute("""
+            INSERT INTO response_feedback (query_id, rating, feedback_text)
+            VALUES (%s, %s, %s)
+            """, (query_id, rating, feedback_text))
+            self.conn.commit()
+            return True
+    
+    def close(self):
+        """Закрывает соединение с базой"""
+        if self.conn:
+            self.conn.close()
+            self.logger.info("✅ PostgreSQL connection closed")
+
+***
+

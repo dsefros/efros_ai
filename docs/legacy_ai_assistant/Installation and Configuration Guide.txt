@@ -1,0 +1,92 @@
+Инструкция по установке и настройке (локально)
+1. Подготовка среды
+Убедитесь, что на сервере или ПК установлены:
+
+ОС Linux (Ubuntu 20.04+ или подобная)
+
+Python 3.10 или выше
+
+pip для установки Python-пакетов
+
+2. Размещение проекта
+Поместите все файлы проекта в удобную директорию, например:
+
+bash
+Копировать
+Редактировать
+/opt/AI_assistent
+Структура проекта должна содержать:
+
+arduino
+Копировать
+Редактировать
+/opt/AI_assistent/
+├── clients/
+├── config.py
+├── main.py
+├── path_config.py
+├── resources/
+├── task_processor.py
+├── venv/  (будет создано)
+└── logs/
+3. Создание виртуального окружения
+В директории проекта выполните:
+
+bash
+Копировать
+Редактировать
+python3 -m venv venv
+source venv/bin/activate
+4. Установка зависимостей
+bash
+Копировать
+Редактировать
+pip install --upgrade pip
+pip install -r resources/requirements.txt
+Если файла requirements.txt нет, перечислите и установите необходимые пакеты вручную:
+
+bash
+Копировать
+Редактировать
+pip install redminelib requests python-dotenv yandex-cloud-ml-sdk retry
+5. Создание файла .env
+В корне проекта /opt/AI_assistent создайте файл .env со следующими переменными:
+
+env
+Копировать
+Редактировать
+REDMINE_URL=https://your-redmine-url.com
+REDMINE_API_KEY=your_redmine_api_key_here
+
+YANDEX_API_KEY=your_yandex_api_key_here
+YANDEX_FOLDER_ID=your_yandex_folder_id_here
+YANDEX_TEMPERATURE=0.2
+
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+TELEGRAM_CHAT_ID=your_telegram_chat_id_here
+
+TARGET_PROJECTS=1,2,3
+TARGET_STATUS=New
+6. Проверка путей к документации и картам инженеров
+Убедитесь, что директории и файлы с документацией и сопоставлениями инженеров расположены в resources/ по следующему пути:
+
+bash
+Копировать
+Редактировать
+resources/documents/markdown/    # для md-файлов документации
+resources/documents/ingeners_projects.txt  # для маппинга проектов и инженеров
+Если пути отличаются, отредактируйте их в config.py или path_config.py.
+
+7. Запуск проекта
+Активируйте виртуальное окружение и запустите основной скрипт:
+
+bash
+Копировать
+Редактировать
+source venv/bin/activate
+python3 main.py
+8. Логирование
+Все логи пишутся в logs/app.log. Проверяйте его на предмет ошибок.
+
+9. Обновление индексирования
+При добавлении новых .md файлов в resources/documents/markdown/ перезапустите проект — индекс будет обновлён автоматически.

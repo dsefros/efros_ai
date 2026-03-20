@@ -1,0 +1,26 @@
+/opt/AI_assistent
+├── clients/               # Модули клиентов (Redmine, Telegram, YandexGPT и др.)
+│   ├── redmine/
+│   │   └── client.py      # Клиент для работы с Redmine API
+│   ├── telegram/
+│   │   └── client.py      # Клиент Telegram для уведомлений
+│   ├── yandex_gpt/
+│   │   ├── client.py      # Клиент для AI модели YandexGPT 
+│   │   ├── index_hash.txt # Кэш хэша md-документов
+│   │   └── index_id.txt   # Кэш ID поискового индекса YandexGPT
+│   ├── gigachat/
+│   │   └── client.py      # Клиент для AI модели GigaChat
+│   └── pdf2md/            # Конвертер PDF в Markdown
+│       └── pdf_converter.py
+├── config.py              # Конфигурация проекта
+├── path_config.py         # Пути к файлам и папкам
+├── main.py                # Точка входа в приложение
+├── task_processor.py      # Логика обработки задач
+├── logs/
+│   └── app.log            # Логи приложения
+├── resources/
+│   ├── documents/
+│   │   ├── ingeners_projects.txt   # Маппинг проектов на инженеров
+│   │   ├── markdown/               # MD-файлы документации (для индексации YandexGPT)
+│   │   └── pdfs/                   # Исходные PDF-документы
+│   └── requirements.txt            # Список зависимостей Python
