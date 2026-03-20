@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from api.server import create_app, _resolve_domain_registry
+from api.server import create_app, _resolve_domain_registry, _split_header_values
 from kernel.ai_kernel import AIKernel
 from kernel.exceptions import DomainNotFoundError
 from kernel.module_loader import load_module
@@ -274,3 +274,84 @@ def test_resolve_domain_registry_prefers_knowledge_then_kernel_then_runtime():
 
     delattr(kernel, 'domain_registry')
     assert _resolve_domain_registry(kernel, runtime=runtime) is registry_from_runtime
+
+
+def test_domains_endpoint_returns_empty_list_without_knowledge_service():
+    kernel = AIKernel()
+    load_module(kernel, 'modules/support_module')
+    client = TestClient(create_app(kernel, FakeModelManager()))
+
+    resp = client.get('/domains')
+
+    assert resp.status_code == 200
+    assert resp.json() == {'domains': []}
+
+
+def test_llm_returns_404_for_unknown_model():
+    from services.models.model_manager import ModelManager
+
+    kernel = AIKernel()
+    load_module(kernel, 'modules/support_module')
+    manager = ModelManager()
+    manager.register('mock', object())
+    client = TestClient(create_app(kernel, manager))
+
+    resp = client.post('/llm', json={'prompt': 'hello', 'model': 'missing'})
+
+    assert resp.status_code == 404
+    assert resp.json()['detail'] == 'Model missing not registered'
+
+
+def test_agent_returns_404_for_unknown_executor():
+    client = build_test_client()
+
+    resp = client.post('/agent/missing', json={'payload': {'query': 'hello'}})
+
+    assert resp.status_code == 404
+    assert resp.json()['detail'] == 'Executor missing not found'
+
+
+def test_pipeline_returns_404_for_unknown_pipeline():
+    client = build_test_client()
+
+    resp = client.post('/pipeline/missing', json={'payload': {'text': 'hello'}})
+
+    assert resp.status_code == 404
+    assert resp.json()['detail'] == 'Pipeline missing not found'
+
+
+def test_pipeline_maps_invalid_step_updates_to_500():
+    kernel = AIKernel()
+    kernel.pipeline_engine.register_pipeline('broken', [lambda context, kernel: ['not-a-dict']])
+    client = TestClient(create_app(kernel, FakeModelManager()))
+
+    resp = client.post('/pipeline/broken', json={'payload': {'text': 'hello'}})
+
+    assert resp.status_code == 500
+    assert resp.json()['detail'] == 'Pipeline step <lambda> must return dict, got list'
+
+
+def test_rag_search_rejects_invalid_limit_bounds():
+    client = build_test_client()
+
+    resp = client.post('/rag/search', json={'query': 'virtual cash register', 'limit_per_collection': 0})
+
+    assert resp.status_code == 422
+    assert resp.json()['detail'][0]['loc'] == ['body', 'limit_per_collection']
+
+
+def test_rag_answer_allows_private_domain_with_group_header():
+    client = build_test_client()
+
+    resp = client.post(
+        '/rag/answer',
+        json={'query': 'virtual cash register', 'domain': 'finance'},
+        headers={'x-efros-groups': 'risk'},
+    )
+
+    assert resp.status_code == 200
+    assert resp.json()['domain'] == 'finance'
+
+
+def test_split_header_values_normalizes_and_deduplicates_items():
+    assert _split_header_values(' analyst, analyst , risk ,, analyst ') == ('analyst', 'risk')
